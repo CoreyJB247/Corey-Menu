@@ -358,6 +358,111 @@ local emergencyVehicles = {
     }
 }
 
+-- Addon vehicles with subcategories
+local addonVehicles = {
+    {
+        subcategory = "Compacts",
+        icon = "car",
+        vehicles = {
+            {model = "piccolo", name = "Grotti Piccolo"},
+            {model = "customcar2", name = "Custom Car 2"},
+            -- Add your addon vehicles here
+        }
+    },
+    {
+        subcategory = "Sedans",
+        icon = "car",
+        vehicles = {
+            {model = "golf8gti", name = "VW Golf 8 GTI"},
+            {model = "tltypes", name = "Honda Acura TLS"},
+            {model = "teslapd", name = "Tesla Model S"},
+            {model = "c6320", name = "Mercedes AMG C63S"},
+            {model = "77monaco", name = "1977 Dodge Monaco "},
+            {model = "22char", name = "2022 Dodge Charger"},
+            {model = "08char", name = "2008 Dodge Charger"},
+            {model = "impa6", name = "2006 Chevy Impala LS"},
+            {model = "22530i", name = "2022 BMW 530I Wagon"},
+            {model = "22ct4", name = "2022 Cadillac Ct4"},
+            {model = "13malibu", name = "2023 Chevy Malibu"},
+            {model = "03impa", name = "2003 Chevy Impala"},
+            {model = "cmr11", name = "2011 Toyota Camry"},
+            {model = "vic11", name = "2011 Ford Crown Victoria"},
+            {model = "11cvpiciv", name = "2011 Ford CVPI (Retired)"},
+            {model = "18chargerciv", name = "2018 Dodge Charger PPV (Retired)"},
+            {model = "m3e36", name = "BMW M3 E36"},
+            {model = "22rs5", name = "2022 Audi rs5"},
+            {model = "22m5sal", name = "2022 BMW M5"},
+            {model = "21avant", name = "2021 Audi RS5 Avant"},
+            -- Add your addon vehicles here
+        }
+    },
+    {
+        subcategory = "Sports",
+        icon = "flag-checkered",
+        vehicles = {
+            {model = "22m5s", name = "2022 BMW M5 CS"},
+            {model = "22bengt", name = "2022 Bentley GT Continental"},
+            {model = "mustang68", name = "1968 Ford Mustang"},
+            -- Add your addon vehicles here
+        }
+    },
+    {
+        subcategory = "Super",
+        icon = "gauge-high",
+        vehicles = {
+            {model = "modcar1", name = "Modified Car 1"},
+            {model = "modcar2", name = "Modified Car 2"},
+            -- Add your addon vehicles here
+        }
+    },
+    {
+        subcategory = "SUVs",
+        icon = "truck",
+        vehicles = {
+            {model = "teslax", name = "Tesla Model X"},
+            {model = "modcar2", name = "Modified Car 2"},
+            -- Add your addon vehicles here
+        }
+    },
+    {
+        subcategory = "Off-Road",
+        icon = "mountain",
+        vehicles = {
+            {model = "modcar1", name = "Modified Car 1"},
+            {model = "modcar2", name = "Modified Car 2"},
+            -- Add your addon vehicles here
+        }
+    },
+    {
+        subcategory = "Vans",
+        icon = "van-shuttle",
+        vehicles = {
+            {model = "modcar1", name = "Modified Car 1"},
+            {model = "modcar2", name = "Modified Car 2"},
+            -- Add your addon vehicles here
+        }
+    },
+    {
+        subcategory = "Motorcycles",
+        icon = "motorcycle",
+        vehicles = {
+            {model = "modcar1", name = "Modified Car 1"},
+            {model = "modcar2", name = "Modified Car 2"},
+            -- Add your addon vehicles here
+        }
+    },
+    {
+        subcategory = "Utility",
+        icon = "circle",
+        vehicles = {
+            {model = "modcar1", name = "Modified Car 1"},
+            {model = "modcar2", name = "Modified Car 2"},
+            -- Add your addon vehicles here
+        }
+    },
+    -- Add more subcategories as needed
+}
+
 local function SpawnVehicle(model, savedData, keepMenuOpen, menuCallback)
     local ped = PlayerPedId()
     local coords = GetEntityCoords(ped)
@@ -825,6 +930,54 @@ local function openEmergencyMenu()
     lib.showContext('emergency_main_menu')
 end
 
+-- New function to open addon subcategory menu
+local function openAddonSubcategoryMenu(subcategory)
+    local elements = {}
+    for _, vehicle in ipairs(subcategory.vehicles) do
+        table.insert(elements, {
+            title = vehicle.name,
+            description = vehicle.model:upper(),
+            icon = 'car-side',
+            onSelect = function()
+                SpawnVehicle(vehicle.model, nil, true, function()
+                    openAddonSubcategoryMenu(subcategory)
+                end)
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'addon_subcategory_menu',
+        title = subcategory.subcategory,
+        menu = 'addon_main_menu',
+        options = elements
+    })
+    lib.showContext('addon_subcategory_menu')
+end
+
+-- New function to open addon category menu
+local function openAddonMenu()
+    local options = {}
+    
+    for _, subcategory in ipairs(addonVehicles) do
+        table.insert(options, {
+            title = subcategory.subcategory,
+            icon = subcategory.icon,
+            onSelect = function()
+                openAddonSubcategoryMenu(subcategory)
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'addon_main_menu',
+        title = 'Addon Vehicles',
+        menu = 'vehicle_spawner_menu',
+        options = options
+    })
+    lib.showContext('addon_main_menu')
+end
+
 local function openCategoryMenu(category)
     local elements = {}
     for _, vehicle in ipairs(category.models) do
@@ -862,6 +1015,17 @@ local function openVehicleSpawnerMenu()
             end
         }
     }
+
+    -- Add Addon category with special handling
+    table.insert(options, {
+        title = 'Custom Vehicles',
+        description = 'Custom addon vehicles',
+        icon = 'star',
+        iconColor = '#FFD700',
+        onSelect = function()
+            openAddonMenu()
+        end
+    })
     
     -- Add Emergency category with special handling
     table.insert(options, {
@@ -873,7 +1037,7 @@ local function openVehicleSpawnerMenu()
             openEmergencyMenu()
         end
     })
-    
+
     -- Add regular vehicle categories
     for _, category in ipairs(vehicles) do
         local description = #category.models .. ' vehicles'
@@ -1129,6 +1293,2959 @@ local function openExtrasAndLiveryMenu()
     lib.showContext('extras_livery_menu')
 end
 
+
+local function openPerformanceModsMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    SetVehicleModKit(vehicle, 0)
+    
+    local performanceMods = {
+        {modType = 11, name = 'Engine', icon = 'gears'},
+        {modType = 12, name = 'Brakes', icon = 'circle-stop'},
+        {modType = 13, name = 'Transmission', icon = 'gauge-high'},
+        {modType = 15, name = 'Suspension', icon = 'car-side'},
+        {modType = 16, name = 'Armor', icon = 'shield-halved'}
+    }
+    
+    local options = {}
+    
+    -- Turbo option
+    local hasTurbo = IsToggleModOn(vehicle, 18)
+    table.insert(options, {
+        title = 'Turbo',
+        description = hasTurbo and 'Currently ON' or 'Currently OFF',
+        icon = 'wind',
+        iconColor = hasTurbo and '#00ff00' or '#ff0000',
+        onSelect = function()
+            ToggleVehicleMod(vehicle, 18, not hasTurbo)
+            lib.notify({title = 'Turbo', description = hasTurbo and 'Disabled' or 'Enabled', type = 'success'})
+            openPerformanceModsMenu()
+        end
+    })
+    
+    -- Performance mods
+    for _, mod in ipairs(performanceMods) do
+        local maxMod = GetNumVehicleMods(vehicle, mod.modType)
+        if maxMod > 0 then
+            table.insert(options, {
+                title = mod.name,
+                description = 'Configure ' .. mod.name:lower() .. ' upgrades',
+                icon = mod.icon,
+                iconColor = '#1E90FF',
+                onSelect = function()
+                    openSpecificModMenu(mod.modType, mod.name, 'performance_mods_menu')
+                end
+            })
+        end
+    end
+    
+    if #options == 1 then
+        table.insert(options, {
+            title = 'No Performance Mods Available',
+            icon = 'circle-xmark',
+            disabled = true
+        })
+    end
+    
+    lib.registerContext({
+        id = 'performance_mods_menu',
+        title = 'Performance Upgrades',
+        menu = 'vehicle_customization_menu',
+        options = options
+    })
+    lib.showContext('performance_mods_menu')
+end
+
+local function openVisualModsMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    SetVehicleModKit(vehicle, 0)
+    
+    local visualMods = {
+        {modType = 0, name = 'Spoilers', icon = 'car-rear'},
+        {modType = 1, name = 'Front Bumper', icon = 'car-burst'},
+        {modType = 2, name = 'Rear Bumper', icon = 'car-burst'},
+        {modType = 3, name = 'Side Skirt', icon = 'car-side'},
+        {modType = 4, name = 'Exhaust', icon = 'wind'},
+        {modType = 5, name = 'Frame', icon = 'border-all'},
+        {modType = 6, name = 'Grille', icon = 'table-cells'},
+        {modType = 7, name = 'Hood', icon = 'car'},
+        {modType = 8, name = 'Fender', icon = 'car'},
+        {modType = 9, name = 'Right Fender', icon = 'car'},
+        {modType = 10, name = 'Roof', icon = 'house'},
+        {modType = 23, name = 'Front Wheels', icon = 'circle'},
+        {modType = 24, name = 'Back Wheels', icon = 'circle'},
+        {modType = 25, name = 'Plate Holder', icon = 'address-card'},
+        {modType = 26, name = 'Vanity Plates', icon = 'address-card'},
+        {modType = 27, name = 'Trim', icon = 'paintbrush'},
+        {modType = 28, name = 'Ornaments', icon = 'star'},
+        {modType = 29, name = 'Dashboard', icon = 'gauge'},
+        {modType = 30, name = 'Dial', icon = 'clock'},
+        {modType = 31, name = 'Door Speaker', icon = 'volume-high'},
+        {modType = 32, name = 'Seats', icon = 'chair'},
+        {modType = 33, name = 'Steering Wheel', icon = 'circle-notch'},
+        {modType = 34, name = 'Shifter Leavers', icon = 'gear'},
+        {modType = 35, name = 'Plaques', icon = 'award'},
+        {modType = 36, name = 'Speakers', icon = 'volume-up'},
+        {modType = 37, name = 'Trunk', icon = 'box'},
+        {modType = 38, name = 'Hydraulics', icon = 'arrows-up-down'},
+        {modType = 39, name = 'Engine Block', icon = 'gears'},
+        {modType = 40, name = 'Air Filter', icon = 'filter'},
+        {modType = 41, name = 'Struts', icon = 'bars'},
+        {modType = 42, name = 'Arch Cover', icon = 'car'},
+        {modType = 43, name = 'Aerials', icon = 'tower-broadcast'},
+        {modType = 44, name = 'Trim 2', icon = 'paintbrush'},
+        {modType = 45, name = 'Tank', icon = 'gas-pump'},
+        {modType = 46, name = 'Windows', icon = 'window-maximize'},
+        {modType = 48, name = 'Livery', icon = 'palette'}
+    }
+    
+    local options = {}
+    
+    -- Window tint option
+    table.insert(options, {
+        title = 'Window Tint',
+        description = 'Change window tint level',
+        icon = 'window-maximize',
+        iconColor = '#696969',
+        onSelect = function()
+            openWindowTintMenu()
+        end
+    })
+    
+    -- Neon lights option
+    table.insert(options, {
+        title = 'Neon Lights',
+        description = 'Configure neon underglow',
+        icon = 'lightbulb',
+        iconColor = '#FF1493',
+        onSelect = function()
+            openNeonLightsMenu()
+        end
+    })
+    
+    -- Visual mods
+    for _, mod in ipairs(visualMods) do
+        local maxMod = GetNumVehicleMods(vehicle, mod.modType)
+        if maxMod > 0 then
+            table.insert(options, {
+                title = mod.name,
+                description = 'Configure ' .. mod.name:lower(),
+                icon = mod.icon,
+                iconColor = '#9370DB',
+                onSelect = function()
+                    openSpecificModMenu(mod.modType, mod.name, 'visual_mods_menu')
+                end
+            })
+        end
+    end
+    
+    lib.registerContext({
+        id = 'visual_mods_menu',
+        title = 'Visual Modifications',
+        menu = 'vehicle_customization_menu',
+        options = options
+    })
+    lib.showContext('visual_mods_menu')
+end
+
+local function openWindowTintMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    local tints = {
+        {name = 'None', id = 0},
+        {name = 'Pure Black', id = 1},
+        {name = 'Dark Smoke', id = 2},
+        {name = 'Light Smoke', id = 3},
+        {name = 'Stock', id = 4},
+        {name = 'Limo', id = 5},
+        {name = 'Green', id = 6}
+    }
+    
+    local options = {}
+    local currentTint = GetVehicleWindowTint(vehicle)
+    
+    for _, tint in ipairs(tints) do
+        local isActive = currentTint == tint.id
+        table.insert(options, {
+            title = tint.name,
+            description = isActive and 'Currently Active' or 'Click to apply',
+            icon = 'window-maximize',
+            iconColor = isActive and '#00ff00' or '#696969',
+            onSelect = function()
+                SetVehicleWindowTint(vehicle, tint.id)
+                lib.notify({title = 'Window Tint Changed', description = tint.name, type = 'success'})
+                openWindowTintMenu()
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'window_tint_menu',
+        title = 'Window Tint',
+        menu = 'visual_mods_menu',
+        options = options
+    })
+    lib.showContext('window_tint_menu')
+end
+
+local function openNeonLightsMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    local neonPositions = {
+        {id = 0, name = 'Left'},
+        {id = 1, name = 'Right'},
+        {id = 2, name = 'Front'},
+        {id = 3, name = 'Back'}
+    }
+    
+    local options = {}
+    
+    -- Toggle all neons
+    local allEnabled = true
+    for _, pos in ipairs(neonPositions) do
+        if not IsVehicleNeonLightEnabled(vehicle, pos.id) then
+            allEnabled = false
+            break
+        end
+    end
+    
+    table.insert(options, {
+        title = allEnabled and 'Disable All Neons' or 'Enable All Neons',
+        icon = 'lightbulb',
+        iconColor = allEnabled and '#ff0000' or '#00ff00',
+        onSelect = function()
+            for _, pos in ipairs(neonPositions) do
+                SetVehicleNeonLightEnabled(vehicle, pos.id, not allEnabled)
+            end
+            lib.notify({title = 'Neon Lights', description = allEnabled and 'All Disabled' or 'All Enabled', type = 'success'})
+            openNeonLightsMenu()
+        end
+    })
+    
+    -- Individual neon positions
+    for _, pos in ipairs(neonPositions) do
+        local isEnabled = IsVehicleNeonLightEnabled(vehicle, pos.id)
+        table.insert(options, {
+            title = pos.name .. ' Neon',
+            description = isEnabled and 'Currently ON' or 'Currently OFF',
+            icon = 'lightbulb',
+            iconColor = isEnabled and '#00ff00' or '#ff0000',
+            onSelect = function()
+                SetVehicleNeonLightEnabled(vehicle, pos.id, not isEnabled)
+                lib.notify({title = pos.name .. ' Neon', description = isEnabled and 'Disabled' or 'Enabled', type = 'success'})
+                openNeonLightsMenu()
+            end
+        })
+    end
+    
+    -- Neon color option
+    table.insert(options, {
+        title = 'Change Neon Color',
+        description = 'Set custom RGB color',
+        icon = 'palette',
+        iconColor = '#FF1493',
+        onSelect = function()
+            local r, g, b = GetVehicleNeonLightsColour(vehicle)
+            local input = lib.inputDialog('Neon Color (RGB)', {
+                {type = 'number', label = 'Red (0-255)', default = r, min = 0, max = 255, required = true},
+                {type = 'number', label = 'Green (0-255)', default = g, min = 0, max = 255, required = true},
+                {type = 'number', label = 'Blue (0-255)', default = b, min = 0, max = 255, required = true}
+            })
+            
+            if input then
+                SetVehicleNeonLightsColour(vehicle, input[1], input[2], input[3])
+                lib.notify({title = 'Neon Color Changed', type = 'success'})
+            end
+            openNeonLightsMenu()
+        end
+    })
+    
+    lib.registerContext({
+        id = 'neon_lights_menu',
+        title = 'Neon Lights',
+        menu = 'visual_mods_menu',
+        options = options
+    })
+    lib.showContext('neon_lights_menu')
+end
+
+local function openSpecificModMenu(modType, modName, parentMenu)
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    SetVehicleModKit(vehicle, 0)
+    local maxMod = GetNumVehicleMods(vehicle, modType)
+    local currentMod = GetVehicleMod(vehicle, modType)
+    
+    local options = {}
+    
+    -- Stock/Remove option
+    table.insert(options, {
+        title = 'Stock / Remove',
+        description = currentMod == -1 and 'Currently Active' or 'Click to apply',
+        icon = 'xmark',
+        iconColor = currentMod == -1 and '#00ff00' or '#ff0000',
+        onSelect = function()
+            RemoveVehicleMod(vehicle, modType)
+            lib.notify({title = modName, description = 'Removed', type = 'success'})
+            openSpecificModMenu(modType, modName, parentMenu)
+        end
+    })
+    
+    -- Mod options
+    for i = 0, maxMod - 1 do
+        local modLabel = GetModTextLabel(vehicle, modType, i)
+        local modDisplayName = modLabel ~= 'NULL' and GetLabelText(modLabel) or ('Upgrade ' .. (i + 1))
+        local isActive = currentMod == i
+        
+        table.insert(options, {
+            title = modDisplayName,
+            description = isActive and 'Currently Active' or 'Click to apply',
+            icon = 'check',
+            iconColor = isActive and '#00ff00' or '#1E90FF',
+            onSelect = function()
+                SetVehicleMod(vehicle, modType, i, false)
+                lib.notify({title = modName, description = modDisplayName, type = 'success'})
+                openSpecificModMenu(modType, modName, parentMenu)
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'specific_mod_menu',
+        title = modName,
+        menu = parentMenu,
+        options = options
+    })
+    lib.showContext('specific_mod_menu')
+end
+
+local function openWindowTintMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    local tints = {
+        {name = 'None', id = 0},
+        {name = 'Pure Black', id = 1},
+        {name = 'Dark Smoke', id = 2},
+        {name = 'Light Smoke', id = 3},
+        {name = 'Stock', id = 4},
+        {name = 'Limo', id = 5},
+        {name = 'Green', id = 6}
+    }
+    
+    local options = {}
+    local currentTint = GetVehicleWindowTint(vehicle)
+    
+    for _, tint in ipairs(tints) do
+        local isActive = currentTint == tint.id
+        table.insert(options, {
+            title = tint.name,
+            description = isActive and 'Currently Active' or 'Click to apply',
+            icon = 'window-maximize',
+            iconColor = isActive and '#00ff00' or '#696969',
+            onSelect = function()
+                SetVehicleWindowTint(vehicle, tint.id)
+                lib.notify({title = 'Window Tint Changed', description = tint.name, type = 'success'})
+                openWindowTintMenu()
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'window_tint_menu',
+        title = 'Window Tint',
+        menu = 'visual_mods_menu',
+        options = options
+    })
+    lib.showContext('window_tint_menu')
+end
+
+local function openNeonLightsMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    local neonPositions = {
+        {id = 0, name = 'Left'},
+        {id = 1, name = 'Right'},
+        {id = 2, name = 'Front'},
+        {id = 3, name = 'Back'}
+    }
+    
+    local options = {}
+    
+    -- Toggle all neons
+    local allEnabled = true
+    for _, pos in ipairs(neonPositions) do
+        if not IsVehicleNeonLightEnabled(vehicle, pos.id) then
+            allEnabled = false
+            break
+        end
+    end
+    
+    table.insert(options, {
+        title = allEnabled and 'Disable All Neons' or 'Enable All Neons',
+        icon = 'lightbulb',
+        iconColor = allEnabled and '#ff0000' or '#00ff00',
+        onSelect = function()
+            for _, pos in ipairs(neonPositions) do
+                SetVehicleNeonLightEnabled(vehicle, pos.id, not allEnabled)
+            end
+            lib.notify({title = 'Neon Lights', description = allEnabled and 'All Disabled' or 'All Enabled', type = 'success'})
+            openNeonLightsMenu()
+        end
+    })
+    
+    -- Individual neon positions
+    for _, pos in ipairs(neonPositions) do
+        local isEnabled = IsVehicleNeonLightEnabled(vehicle, pos.id)
+        table.insert(options, {
+            title = pos.name .. ' Neon',
+            description = isEnabled and 'Currently ON' or 'Currently OFF',
+            icon = 'lightbulb',
+            iconColor = isEnabled and '#00ff00' or '#ff0000',
+            onSelect = function()
+                SetVehicleNeonLightEnabled(vehicle, pos.id, not isEnabled)
+                lib.notify({title = pos.name .. ' Neon', description = isEnabled and 'Disabled' or 'Enabled', type = 'success'})
+                openNeonLightsMenu()
+            end
+        })
+    end
+    
+    -- Neon color option
+    table.insert(options, {
+        title = 'Change Neon Color',
+        description = 'Set custom RGB color',
+        icon = 'palette',
+        iconColor = '#FF1493',
+        onSelect = function()
+            local r, g, b = GetVehicleNeonLightsColour(vehicle)
+            local input = lib.inputDialog('Neon Color (RGB)', {
+                {type = 'number', label = 'Red (0-255)', default = r, min = 0, max = 255, required = true},
+                {type = 'number', label = 'Green (0-255)', default = g, min = 0, max = 255, required = true},
+                {type = 'number', label = 'Blue (0-255)', default = b, min = 0, max = 255, required = true}
+            })
+            
+            if input then
+                SetVehicleNeonLightsColour(vehicle, input[1], input[2], input[3])
+                lib.notify({title = 'Neon Color Changed', type = 'success'})
+            end
+            openNeonLightsMenu()
+        end
+    })
+    
+    lib.registerContext({
+        id = 'neon_lights_menu',
+        title = 'Neon Lights',
+        menu = 'visual_mods_menu',
+        options = options
+    })
+    lib.showContext('neon_lights_menu')
+end
+
+local function openPerformanceModsMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    SetVehicleModKit(vehicle, 0)
+    
+    local performanceMods = {
+        {modType = 11, name = 'Engine', icon = 'gears'},
+        {modType = 12, name = 'Brakes', icon = 'circle-stop'},
+        {modType = 13, name = 'Transmission', icon = 'gauge-high'},
+        {modType = 15, name = 'Suspension', icon = 'car-side'},
+        {modType = 16, name = 'Armor', icon = 'shield-halved'}
+    }
+    
+    local options = {}
+    
+    -- Turbo option
+    local hasTurbo = IsToggleModOn(vehicle, 18)
+    table.insert(options, {
+        title = 'Turbo',
+        description = hasTurbo and 'Currently ON' or 'Currently OFF',
+        icon = 'wind',
+        iconColor = hasTurbo and '#00ff00' or '#ff0000',
+        onSelect = function()
+            ToggleVehicleMod(vehicle, 18, not hasTurbo)
+            lib.notify({title = 'Turbo', description = hasTurbo and 'Disabled' or 'Enabled', type = 'success'})
+            openPerformanceModsMenu()
+        end
+    })
+    
+    -- Performance mods
+    for _, mod in ipairs(performanceMods) do
+        local maxMod = GetNumVehicleMods(vehicle, mod.modType)
+        if maxMod > 0 then
+            table.insert(options, {
+                title = mod.name,
+                description = 'Configure ' .. mod.name:lower() .. ' upgrades',
+                icon = mod.icon,
+                iconColor = '#1E90FF',
+                onSelect = function()
+                    openSpecificModMenu(mod.modType, mod.name, 'performance_mods_menu')
+                end
+            })
+        end
+    end
+    
+    if #options == 1 then
+        table.insert(options, {
+            title = 'No Performance Mods Available',
+            icon = 'circle-xmark',
+            disabled = true
+        })
+    end
+    
+    lib.registerContext({
+        id = 'performance_mods_menu',
+        title = 'Performance Upgrades',
+        menu = 'vehicle_customization_menu',
+        options = options
+    })
+    lib.showContext('performance_mods_menu')
+end
+
+local function openVisualModsMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    SetVehicleModKit(vehicle, 0)
+    
+    local visualMods = {
+        {modType = 0, name = 'Spoilers', icon = 'car-rear'},
+        {modType = 1, name = 'Front Bumper', icon = 'car-burst'},
+        {modType = 2, name = 'Rear Bumper', icon = 'car-burst'},
+        {modType = 3, name = 'Side Skirt', icon = 'car-side'},
+        {modType = 4, name = 'Exhaust', icon = 'wind'},
+        {modType = 5, name = 'Frame', icon = 'border-all'},
+        {modType = 6, name = 'Grille', icon = 'table-cells'},
+        {modType = 7, name = 'Hood', icon = 'car'},
+        {modType = 8, name = 'Fender', icon = 'car'},
+        {modType = 9, name = 'Right Fender', icon = 'car'},
+        {modType = 10, name = 'Roof', icon = 'house'},
+        {modType = 23, name = 'Front Wheels', icon = 'circle'},
+        {modType = 24, name = 'Back Wheels', icon = 'circle'},
+        {modType = 25, name = 'Plate Holder', icon = 'address-card'},
+        {modType = 26, name = 'Vanity Plates', icon = 'address-card'},
+        {modType = 27, name = 'Trim', icon = 'paintbrush'},
+        {modType = 28, name = 'Ornaments', icon = 'star'},
+        {modType = 29, name = 'Dashboard', icon = 'gauge'},
+        {modType = 30, name = 'Dial', icon = 'clock'},
+        {modType = 31, name = 'Door Speaker', icon = 'volume-high'},
+        {modType = 32, name = 'Seats', icon = 'chair'},
+        {modType = 33, name = 'Steering Wheel', icon = 'circle-notch'},
+        {modType = 34, name = 'Shifter Leavers', icon = 'gear'},
+        {modType = 35, name = 'Plaques', icon = 'award'},
+        {modType = 36, name = 'Speakers', icon = 'volume-up'},
+        {modType = 37, name = 'Trunk', icon = 'box'},
+        {modType = 38, name = 'Hydraulics', icon = 'arrows-up-down'},
+        {modType = 39, name = 'Engine Block', icon = 'gears'},
+        {modType = 40, name = 'Air Filter', icon = 'filter'},
+        {modType = 41, name = 'Struts', icon = 'bars'},
+        {modType = 42, name = 'Arch Cover', icon = 'car'},
+        {modType = 43, name = 'Aerials', icon = 'tower-broadcast'},
+        {modType = 44, name = 'Trim 2', icon = 'paintbrush'},
+        {modType = 45, name = 'Tank', icon = 'gas-pump'},
+        {modType = 46, name = 'Windows', icon = 'window-maximize'},
+        {modType = 48, name = 'Livery', icon = 'palette'}
+    }
+    
+    local options = {}
+    
+    -- Window tint option
+    table.insert(options, {
+        title = 'Window Tint',
+        description = 'Change window tint level',
+        icon = 'window-maximize',
+        iconColor = '#696969',
+        onSelect = function()
+            openWindowTintMenu()
+        end
+    })
+    
+    -- Neon lights option
+    table.insert(options, {
+        title = 'Neon Lights',
+        description = 'Configure neon underglow',
+        icon = 'lightbulb',
+        iconColor = '#FF1493',
+        onSelect = function()
+            openNeonLightsMenu()
+        end
+    })
+    
+    -- Visual mods
+    for _, mod in ipairs(visualMods) do
+        local maxMod = GetNumVehicleMods(vehicle, mod.modType)
+        if maxMod > 0 then
+            table.insert(options, {
+                title = mod.name,
+                description = 'Configure ' .. mod.name:lower(),
+                icon = mod.icon,
+                iconColor = '#9370DB',
+                onSelect = function()
+                    openSpecificModMenu(mod.modType, mod.name, 'visual_mods_menu')
+                end
+            })
+        end
+    end
+    
+    lib.registerContext({
+        id = 'visual_mods_menu',
+        title = 'Visual Modifications',
+        menu = 'vehicle_customization_menu',
+        options = options
+    })
+    lib.showContext('visual_mods_menu')
+end
+
+local function openWindowTintMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    local tints = {
+        {name = 'None', id = 0},
+        {name = 'Pure Black', id = 1},
+        {name = 'Dark Smoke', id = 2},
+        {name = 'Light Smoke', id = 3},
+        {name = 'Stock', id = 4},
+        {name = 'Limo', id = 5},
+        {name = 'Green', id = 6}
+    }
+    
+    local options = {}
+    local currentTint = GetVehicleWindowTint(vehicle)
+    
+    for _, tint in ipairs(tints) do
+        local isActive = currentTint == tint.id
+        table.insert(options, {
+            title = tint.name,
+            description = isActive and 'Currently Active' or 'Click to apply',
+            icon = 'window-maximize',
+            iconColor = isActive and '#00ff00' or '#696969',
+            onSelect = function()
+                SetVehicleWindowTint(vehicle, tint.id)
+                lib.notify({title = 'Window Tint Changed', description = tint.name, type = 'success'})
+                openWindowTintMenu()
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'window_tint_menu',
+        title = 'Window Tint',
+        menu = 'visual_mods_menu',
+        options = options
+    })
+    lib.showContext('window_tint_menu')
+end
+
+local function openNeonLightsMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    local neonPositions = {
+        {id = 0, name = 'Left'},
+        {id = 1, name = 'Right'},
+        {id = 2, name = 'Front'},
+        {id = 3, name = 'Back'}
+    }
+    
+    local options = {}
+    
+    -- Toggle all neons
+    local allEnabled = true
+    for _, pos in ipairs(neonPositions) do
+        if not IsVehicleNeonLightEnabled(vehicle, pos.id) then
+            allEnabled = false
+            break
+        end
+    end
+    
+    table.insert(options, {
+        title = allEnabled and 'Disable All Neons' or 'Enable All Neons',
+        icon = 'lightbulb',
+        iconColor = allEnabled and '#ff0000' or '#00ff00',
+        onSelect = function()
+            for _, pos in ipairs(neonPositions) do
+                SetVehicleNeonLightEnabled(vehicle, pos.id, not allEnabled)
+            end
+            lib.notify({title = 'Neon Lights', description = allEnabled and 'All Disabled' or 'All Enabled', type = 'success'})
+            openNeonLightsMenu()
+        end
+    })
+    
+    -- Individual neon positions
+    for _, pos in ipairs(neonPositions) do
+        local isEnabled = IsVehicleNeonLightEnabled(vehicle, pos.id)
+        table.insert(options, {
+            title = pos.name .. ' Neon',
+            description = isEnabled and 'Currently ON' or 'Currently OFF',
+            icon = 'lightbulb',
+            iconColor = isEnabled and '#00ff00' or '#ff0000',
+            onSelect = function()
+                SetVehicleNeonLightEnabled(vehicle, pos.id, not isEnabled)
+                lib.notify({title = pos.name .. ' Neon', description = isEnabled and 'Disabled' or 'Enabled', type = 'success'})
+                openNeonLightsMenu()
+            end
+        })
+    end
+    
+    -- Neon color option
+    table.insert(options, {
+        title = 'Change Neon Color',
+        description = 'Set custom RGB color',
+        icon = 'palette',
+        iconColor = '#FF1493',
+        onSelect = function()
+            local r, g, b = GetVehicleNeonLightsColour(vehicle)
+            local input = lib.inputDialog('Neon Color (RGB)', {
+                {type = 'number', label = 'Red (0-255)', default = r, min = 0, max = 255, required = true},
+                {type = 'number', label = 'Green (0-255)', default = g, min = 0, max = 255, required = true},
+                {type = 'number', label = 'Blue (0-255)', default = b, min = 0, max = 255, required = true}
+            })
+            
+            if input then
+                SetVehicleNeonLightsColour(vehicle, input[1], input[2], input[3])
+                lib.notify({title = 'Neon Color Changed', type = 'success'})
+            end
+            openNeonLightsMenu()
+        end
+    })
+    
+    lib.registerContext({
+        id = 'neon_lights_menu',
+        title = 'Neon Lights',
+        menu = 'visual_mods_menu',
+        options = options
+    })
+    lib.showContext('neon_lights_menu')
+end
+
+local function openSpecificModMenu(modType, modName, parentMenu)
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    SetVehicleModKit(vehicle, 0)
+    local maxMod = GetNumVehicleMods(vehicle, modType)
+    local currentMod = GetVehicleMod(vehicle, modType)
+    
+    -- Performance mod level names
+    local performanceLabels = {
+        [11] = {'Stock Engine', 'Level 1 Engine', 'Level 2 Engine', 'Level 3 Engine', 'Level 4 Engine'},
+        [12] = {'Stock Brakes', 'Street Brakes', 'Sport Brakes', 'Race Brakes'},
+        [13] = {'Stock Transmission', 'Street Transmission', 'Sport Transmission', 'Race Transmission'},
+        [15] = {'Stock Suspension', 'Lowered Suspension', 'Street Suspension', 'Sport Suspension', 'Competition Suspension'},
+        [16] = {'No Armor', 'Armor Upgrade 20%', 'Armor Upgrade 40%', 'Armor Upgrade 60%', 'Armor Upgrade 80%', 'Armor Upgrade 100%'}
+    }
+    
+    local options = {}
+    
+    -- Stock/Remove option
+    table.insert(options, {
+        title = 'Stock / Remove',
+        description = currentMod == -1 and 'Currently Active' or 'Click to apply',
+        icon = 'xmark',
+        iconColor = currentMod == -1 and '#00ff00' or '#ff0000',
+        onSelect = function()
+            RemoveVehicleMod(vehicle, modType)
+            lib.notify({title = modName, description = 'Removed', type = 'success'})
+            openSpecificModMenu(modType, modName, parentMenu)
+        end
+    })
+    
+    -- Mod options
+    for i = 0, maxMod - 1 do
+        local modDisplayName
+        
+        -- Check if we have a custom label for this performance mod
+        if performanceLabels[modType] and performanceLabels[modType][i + 1] then
+            modDisplayName = performanceLabels[modType][i + 1]
+        else
+            -- Try to get the label from the game
+            local modLabel = GetModTextLabel(vehicle, modType, i)
+            local labelText = GetLabelText(modLabel)
+            
+            -- If label is valid and not the same as input (which means it wasn't found)
+            if labelText and labelText ~= modLabel and labelText ~= 'NULL' then
+                modDisplayName = labelText
+            else
+                -- Fallback to generic names
+                modDisplayName = 'Upgrade ' .. (i + 1)
+            end
+        end
+        
+        local isActive = currentMod == i
+        
+        table.insert(options, {
+            title = modDisplayName,
+            description = isActive and 'Currently Active' or 'Click to apply',
+            icon = 'check',
+            iconColor = isActive and '#00ff00' or '#1E90FF',
+            onSelect = function()
+                SetVehicleMod(vehicle, modType, i, false)
+                lib.notify({title = modName, description = modDisplayName, type = 'success'})
+                openSpecificModMenu(modType, modName, parentMenu)
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'specific_mod_menu',
+        title = modName,
+        menu = parentMenu,
+        options = options
+    })
+    lib.showContext('specific_mod_menu')
+end
+
+local function openWindowTintMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    local tints = {
+        {name = 'None', id = 0},
+        {name = 'Pure Black', id = 1},
+        {name = 'Dark Smoke', id = 2},
+        {name = 'Light Smoke', id = 3},
+        {name = 'Stock', id = 4},
+        {name = 'Limo', id = 5},
+        {name = 'Green', id = 6}
+    }
+    
+    local options = {}
+    local currentTint = GetVehicleWindowTint(vehicle)
+    
+    for _, tint in ipairs(tints) do
+        local isActive = currentTint == tint.id
+        table.insert(options, {
+            title = tint.name,
+            description = isActive and 'Currently Active' or 'Click to apply',
+            icon = 'window-maximize',
+            iconColor = isActive and '#00ff00' or '#696969',
+            onSelect = function()
+                SetVehicleWindowTint(vehicle, tint.id)
+                lib.notify({title = 'Window Tint Changed', description = tint.name, type = 'success'})
+                openWindowTintMenu()
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'window_tint_menu',
+        title = 'Window Tint',
+        menu = 'visual_mods_menu',
+        options = options
+    })
+    lib.showContext('window_tint_menu')
+end
+
+local function openNeonLightsMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    local neonPositions = {
+        {id = 0, name = 'Left'},
+        {id = 1, name = 'Right'},
+        {id = 2, name = 'Front'},
+        {id = 3, name = 'Back'}
+    }
+    
+    local options = {}
+    
+    -- Toggle all neons
+    local allEnabled = true
+    for _, pos in ipairs(neonPositions) do
+        if not IsVehicleNeonLightEnabled(vehicle, pos.id) then
+            allEnabled = false
+            break
+        end
+    end
+    
+    table.insert(options, {
+        title = allEnabled and 'Disable All Neons' or 'Enable All Neons',
+        icon = 'lightbulb',
+        iconColor = allEnabled and '#ff0000' or '#00ff00',
+        onSelect = function()
+            for _, pos in ipairs(neonPositions) do
+                SetVehicleNeonLightEnabled(vehicle, pos.id, not allEnabled)
+            end
+            lib.notify({title = 'Neon Lights', description = allEnabled and 'All Disabled' or 'All Enabled', type = 'success'})
+            openNeonLightsMenu()
+        end
+    })
+    
+    -- Individual neon positions
+    for _, pos in ipairs(neonPositions) do
+        local isEnabled = IsVehicleNeonLightEnabled(vehicle, pos.id)
+        table.insert(options, {
+            title = pos.name .. ' Neon',
+            description = isEnabled and 'Currently ON' or 'Currently OFF',
+            icon = 'lightbulb',
+            iconColor = isEnabled and '#00ff00' or '#ff0000',
+            onSelect = function()
+                SetVehicleNeonLightEnabled(vehicle, pos.id, not isEnabled)
+                lib.notify({title = pos.name .. ' Neon', description = isEnabled and 'Disabled' or 'Enabled', type = 'success'})
+                openNeonLightsMenu()
+            end
+        })
+    end
+    
+    -- Neon color option
+    table.insert(options, {
+        title = 'Change Neon Color',
+        description = 'Set custom RGB color',
+        icon = 'palette',
+        iconColor = '#FF1493',
+        onSelect = function()
+            local r, g, b = GetVehicleNeonLightsColour(vehicle)
+            local input = lib.inputDialog('Neon Color (RGB)', {
+                {type = 'number', label = 'Red (0-255)', default = r, min = 0, max = 255, required = true},
+                {type = 'number', label = 'Green (0-255)', default = g, min = 0, max = 255, required = true},
+                {type = 'number', label = 'Blue (0-255)', default = b, min = 0, max = 255, required = true}
+            })
+            
+            if input then
+                SetVehicleNeonLightsColour(vehicle, input[1], input[2], input[3])
+                lib.notify({title = 'Neon Color Changed', type = 'success'})
+            end
+            openNeonLightsMenu()
+        end
+    })
+    
+    lib.registerContext({
+        id = 'neon_lights_menu',
+        title = 'Neon Lights',
+        menu = 'visual_mods_menu',
+        options = options
+    })
+    lib.showContext('neon_lights_menu')
+end
+
+local function openPerformanceModsMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    SetVehicleModKit(vehicle, 0)
+    
+    local performanceMods = {
+        {modType = 11, name = 'Engine', icon = 'gears'},
+        {modType = 12, name = 'Brakes', icon = 'circle-stop'},
+        {modType = 13, name = 'Transmission', icon = 'gauge-high'},
+        {modType = 15, name = 'Suspension', icon = 'car-side'},
+        {modType = 16, name = 'Armor', icon = 'shield-halved'}
+    }
+    
+    local options = {}
+    
+    -- Turbo option
+    local hasTurbo = IsToggleModOn(vehicle, 18)
+    table.insert(options, {
+        title = 'Turbo',
+        description = hasTurbo and 'Currently ON' or 'Currently OFF',
+        icon = 'wind',
+        iconColor = hasTurbo and '#00ff00' or '#ff0000',
+        onSelect = function()
+            ToggleVehicleMod(vehicle, 18, not hasTurbo)
+            lib.notify({title = 'Turbo', description = hasTurbo and 'Disabled' or 'Enabled', type = 'success'})
+            openPerformanceModsMenu()
+        end
+    })
+    
+    -- Performance mods
+    for _, mod in ipairs(performanceMods) do
+        local maxMod = GetNumVehicleMods(vehicle, mod.modType)
+        if maxMod > 0 then
+            table.insert(options, {
+                title = mod.name,
+                description = 'Configure ' .. mod.name:lower() .. ' upgrades',
+                icon = mod.icon,
+                iconColor = '#1E90FF',
+                onSelect = function()
+                    openSpecificModMenu(mod.modType, mod.name, 'performance_mods_menu')
+                end
+            })
+        end
+    end
+    
+    if #options == 1 then
+        table.insert(options, {
+            title = 'No Performance Mods Available',
+            icon = 'circle-xmark',
+            disabled = true
+        })
+    end
+    
+    lib.registerContext({
+        id = 'performance_mods_menu',
+        title = 'Performance Upgrades',
+        menu = 'vehicle_customization_menu',
+        options = options
+    })
+    lib.showContext('performance_mods_menu')
+end
+
+local function openVisualModsMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    SetVehicleModKit(vehicle, 0)
+    
+    local visualMods = {
+        {modType = 0, name = 'Spoilers', icon = 'car-rear'},
+        {modType = 1, name = 'Front Bumper', icon = 'car-burst'},
+        {modType = 2, name = 'Rear Bumper', icon = 'car-burst'},
+        {modType = 3, name = 'Side Skirt', icon = 'car-side'},
+        {modType = 4, name = 'Exhaust', icon = 'wind'},
+        {modType = 5, name = 'Frame', icon = 'border-all'},
+        {modType = 6, name = 'Grille', icon = 'table-cells'},
+        {modType = 7, name = 'Hood', icon = 'car'},
+        {modType = 8, name = 'Fender', icon = 'car'},
+        {modType = 9, name = 'Right Fender', icon = 'car'},
+        {modType = 10, name = 'Roof', icon = 'house'},
+        {modType = 23, name = 'Front Wheels', icon = 'circle'},
+        {modType = 24, name = 'Back Wheels', icon = 'circle'},
+        {modType = 25, name = 'Plate Holder', icon = 'address-card'},
+        {modType = 26, name = 'Vanity Plates', icon = 'address-card'},
+        {modType = 27, name = 'Trim', icon = 'paintbrush'},
+        {modType = 28, name = 'Ornaments', icon = 'star'},
+        {modType = 29, name = 'Dashboard', icon = 'gauge'},
+        {modType = 30, name = 'Dial', icon = 'clock'},
+        {modType = 31, name = 'Door Speaker', icon = 'volume-high'},
+        {modType = 32, name = 'Seats', icon = 'chair'},
+        {modType = 33, name = 'Steering Wheel', icon = 'circle-notch'},
+        {modType = 34, name = 'Shifter Leavers', icon = 'gear'},
+        {modType = 35, name = 'Plaques', icon = 'award'},
+        {modType = 36, name = 'Speakers', icon = 'volume-up'},
+        {modType = 37, name = 'Trunk', icon = 'box'},
+        {modType = 38, name = 'Hydraulics', icon = 'arrows-up-down'},
+        {modType = 39, name = 'Engine Block', icon = 'gears'},
+        {modType = 40, name = 'Air Filter', icon = 'filter'},
+        {modType = 41, name = 'Struts', icon = 'bars'},
+        {modType = 42, name = 'Arch Cover', icon = 'car'},
+        {modType = 43, name = 'Aerials', icon = 'tower-broadcast'},
+        {modType = 44, name = 'Trim 2', icon = 'paintbrush'},
+        {modType = 45, name = 'Tank', icon = 'gas-pump'},
+        {modType = 46, name = 'Windows', icon = 'window-maximize'},
+        {modType = 48, name = 'Livery', icon = 'palette'}
+    }
+    
+    local options = {}
+    
+    -- Window tint option
+    table.insert(options, {
+        title = 'Window Tint',
+        description = 'Change window tint level',
+        icon = 'window-maximize',
+        iconColor = '#696969',
+        onSelect = function()
+            openWindowTintMenu()
+        end
+    })
+    
+    -- Neon lights option
+    table.insert(options, {
+        title = 'Neon Lights',
+        description = 'Configure neon underglow',
+        icon = 'lightbulb',
+        iconColor = '#FF1493',
+        onSelect = function()
+            openNeonLightsMenu()
+        end
+    })
+    
+    -- Visual mods
+    for _, mod in ipairs(visualMods) do
+        local maxMod = GetNumVehicleMods(vehicle, mod.modType)
+        if maxMod > 0 then
+            table.insert(options, {
+                title = mod.name,
+                description = 'Configure ' .. mod.name:lower(),
+                icon = mod.icon,
+                iconColor = '#9370DB',
+                onSelect = function()
+                    openSpecificModMenu(mod.modType, mod.name, 'visual_mods_menu')
+                end
+            })
+        end
+    end
+    
+    lib.registerContext({
+        id = 'visual_mods_menu',
+        title = 'Visual Modifications',
+        menu = 'vehicle_customization_menu',
+        options = options
+    })
+    lib.showContext('visual_mods_menu')
+end
+
+local function openWindowTintMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    local tints = {
+        {name = 'None', id = 0},
+        {name = 'Pure Black', id = 1},
+        {name = 'Dark Smoke', id = 2},
+        {name = 'Light Smoke', id = 3},
+        {name = 'Stock', id = 4},
+        {name = 'Limo', id = 5},
+        {name = 'Green', id = 6}
+    }
+    
+    local options = {}
+    local currentTint = GetVehicleWindowTint(vehicle)
+    
+    for _, tint in ipairs(tints) do
+        local isActive = currentTint == tint.id
+        table.insert(options, {
+            title = tint.name,
+            description = isActive and 'Currently Active' or 'Click to apply',
+            icon = 'window-maximize',
+            iconColor = isActive and '#00ff00' or '#696969',
+            onSelect = function()
+                SetVehicleWindowTint(vehicle, tint.id)
+                lib.notify({title = 'Window Tint Changed', description = tint.name, type = 'success'})
+                openWindowTintMenu()
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'window_tint_menu',
+        title = 'Window Tint',
+        menu = 'visual_mods_menu',
+        options = options
+    })
+    lib.showContext('window_tint_menu')
+end
+
+local function openNeonLightsMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    local neonPositions = {
+        {id = 0, name = 'Left'},
+        {id = 1, name = 'Right'},
+        {id = 2, name = 'Front'},
+        {id = 3, name = 'Back'}
+    }
+    
+    local options = {}
+    
+    -- Toggle all neons
+    local allEnabled = true
+    for _, pos in ipairs(neonPositions) do
+        if not IsVehicleNeonLightEnabled(vehicle, pos.id) then
+            allEnabled = false
+            break
+        end
+    end
+    
+    table.insert(options, {
+        title = allEnabled and 'Disable All Neons' or 'Enable All Neons',
+        icon = 'lightbulb',
+        iconColor = allEnabled and '#ff0000' or '#00ff00',
+        onSelect = function()
+            for _, pos in ipairs(neonPositions) do
+                SetVehicleNeonLightEnabled(vehicle, pos.id, not allEnabled)
+            end
+            lib.notify({title = 'Neon Lights', description = allEnabled and 'All Disabled' or 'All Enabled', type = 'success'})
+            openNeonLightsMenu()
+        end
+    })
+    
+    -- Individual neon positions
+    for _, pos in ipairs(neonPositions) do
+        local isEnabled = IsVehicleNeonLightEnabled(vehicle, pos.id)
+        table.insert(options, {
+            title = pos.name .. ' Neon',
+            description = isEnabled and 'Currently ON' or 'Currently OFF',
+            icon = 'lightbulb',
+            iconColor = isEnabled and '#00ff00' or '#ff0000',
+            onSelect = function()
+                SetVehicleNeonLightEnabled(vehicle, pos.id, not isEnabled)
+                lib.notify({title = pos.name .. ' Neon', description = isEnabled and 'Disabled' or 'Enabled', type = 'success'})
+                openNeonLightsMenu()
+            end
+        })
+    end
+    
+    -- Neon color option
+    table.insert(options, {
+        title = 'Change Neon Color',
+        description = 'Set custom RGB color',
+        icon = 'palette',
+        iconColor = '#FF1493',
+        onSelect = function()
+            local r, g, b = GetVehicleNeonLightsColour(vehicle)
+            local input = lib.inputDialog('Neon Color (RGB)', {
+                {type = 'number', label = 'Red (0-255)', default = r, min = 0, max = 255, required = true},
+                {type = 'number', label = 'Green (0-255)', default = g, min = 0, max = 255, required = true},
+                {type = 'number', label = 'Blue (0-255)', default = b, min = 0, max = 255, required = true}
+            })
+            
+            if input then
+                SetVehicleNeonLightsColour(vehicle, input[1], input[2], input[3])
+                lib.notify({title = 'Neon Color Changed', type = 'success'})
+            end
+            openNeonLightsMenu()
+        end
+    })
+    
+    lib.registerContext({
+        id = 'neon_lights_menu',
+        title = 'Neon Lights',
+        menu = 'visual_mods_menu',
+        options = options
+    })
+    lib.showContext('neon_lights_menu')
+end
+
+local function openWheelModMenu(wheelType, wheelTypeName, parentMenu)
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    SetVehicleModKit(vehicle, 0)
+    
+    -- Set the wheel type first
+    SetVehicleWheelType(vehicle, wheelType)
+    
+    local maxMod = GetNumVehicleMods(vehicle, 23) -- 23 is front wheels
+    local currentMod = GetVehicleMod(vehicle, 23)
+    
+    local options = {}
+    
+    -- Stock wheels option
+    table.insert(options, {
+        title = 'Stock Wheels',
+        description = currentMod == -1 and 'Currently Active' or 'Click to apply',
+        icon = 'circle',
+        iconColor = currentMod == -1 and '#00ff00' or '#ff0000',
+        onSelect = function()
+            RemoveVehicleMod(vehicle, 23)
+            lib.notify({title = 'Wheels', description = 'Stock wheels applied', type = 'success'})
+            openWheelModMenu(wheelType, wheelTypeName, parentMenu)
+        end
+    })
+    
+    -- Wheel options
+    for i = 0, maxMod - 1 do
+        local modLabel = GetModTextLabel(vehicle, 23, i)
+        local labelText = GetLabelText(modLabel)
+        local modDisplayName
+        
+        if labelText and labelText ~= modLabel and labelText ~= 'NULL' then
+            modDisplayName = labelText
+        else
+            modDisplayName = wheelTypeName .. ' Wheel ' .. (i + 1)
+        end
+        
+        local isActive = currentMod == i
+        
+        table.insert(options, {
+            title = modDisplayName,
+            description = isActive and 'Currently Active' or 'Click to apply',
+            icon = 'circle',
+            iconColor = isActive and '#00ff00' or '#1E90FF',
+            onSelect = function()
+                SetVehicleWheelType(vehicle, wheelType)
+                SetVehicleMod(vehicle, 23, i, false)
+                lib.notify({title = 'Wheels', description = modDisplayName, type = 'success'})
+                openWheelModMenu(wheelType, wheelTypeName, parentMenu)
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'wheel_mod_menu',
+        title = wheelTypeName .. ' Wheels',
+        menu = parentMenu,
+        options = options
+    })
+    lib.showContext('wheel_mod_menu')
+end
+
+local function openWheelAccessoriesMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    SetVehicleModKit(vehicle, 0)
+    
+    local options = {}
+    
+    -- Custom Tires
+    local hasCustomTires = GetVehicleModVariation(vehicle, 23)
+    table.insert(options, {
+        title = 'Custom Tires',
+        description = hasCustomTires and 'Currently ON' or 'Currently OFF',
+        icon = 'circle-notch',
+        iconColor = hasCustomTires and '#00ff00' or '#ff0000',
+        onSelect = function()
+            local currentMod = GetVehicleMod(vehicle, 23)
+            if currentMod ~= -1 then
+                SetVehicleMod(vehicle, 23, currentMod, not hasCustomTires)
+                lib.notify({title = 'Custom Tires', description = hasCustomTires and 'Disabled' or 'Enabled', type = 'success'})
+            else
+                lib.notify({title = 'Error', description = 'Install custom wheels first', type = 'error'})
+            end
+            openWheelAccessoriesMenu()
+        end
+    })
+    
+    -- Tire Smoke Color
+    table.insert(options, {
+        title = 'Tire Smoke Color',
+        description = 'Set custom RGB color',
+        icon = 'cloud',
+        iconColor = '#B0C4DE',
+        onSelect = function()
+            local r, g, b = GetVehicleTyreSmokeColor(vehicle)
+            local input = lib.inputDialog('Tire Smoke Color (RGB)', {
+                {type = 'number', label = 'Red (0-255)', default = r, min = 0, max = 255, required = true},
+                {type = 'number', label = 'Green (0-255)', default = g, min = 0, max = 255, required = true},
+                {type = 'number', label = 'Blue (0-255)', default = b, min = 0, max = 255, required = true}
+            })
+            
+            if input then
+                SetVehicleModKit(vehicle, 0)
+                ToggleVehicleMod(vehicle, 20, true)
+                SetVehicleTyreSmokeColor(vehicle, input[1], input[2], input[3])
+                lib.notify({title = 'Tire Smoke Color Changed', type = 'success'})
+            end
+            openWheelAccessoriesMenu()
+        end
+    })
+    
+    -- Bulletproof Tires
+    local hasBulletproofTires = GetVehicleTyresCanBurst(vehicle) == false
+    table.insert(options, {
+        title = 'Bulletproof Tires',
+        description = hasBulletproofTires and 'Currently ON' or 'Currently OFF',
+        icon = 'shield',
+        iconColor = hasBulletproofTires and '#00ff00' or '#ff0000',
+        onSelect = function()
+            SetVehicleTyresCanBurst(vehicle, hasBulletproofTires)
+            lib.notify({title = 'Bulletproof Tires', description = hasBulletproofTires and 'Disabled' or 'Enabled', type = 'success'})
+            openWheelAccessoriesMenu()
+        end
+    })
+    
+    -- Wheel Color (if custom wheels are installed)
+    local currentMod = GetVehicleMod(vehicle, 23)
+    if currentMod ~= -1 then
+        table.insert(options, {
+            title = 'Change Wheel Color',
+            description = 'Modify wheel rim color',
+            icon = 'palette',
+            iconColor = '#FFD700',
+            onSelect = function()
+                openWheelColorMenu()
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'wheel_accessories_menu',
+        title = 'Wheel Accessories',
+        menu = 'wheels_main_menu',
+        options = options
+    })
+    lib.showContext('wheel_accessories_menu')
+end
+
+local function openWheelColorMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    local colors = {
+        {name = 'Black', id = 0}, {name = 'Carbon Black', id = 147}, {name = 'Graphite', id = 1},
+        {name = 'Steel', id = 3}, {name = 'Silver', id = 4}, {name = 'Frost White', id = 111},
+        {name = 'Red', id = 27}, {name = 'Torino Red', id = 28}, {name = 'Formula Red', id = 29},
+        {name = 'Blaze Red', id = 30}, {name = 'Hot Pink', id = 135}, {name = 'Salmon Pink', id = 136},
+        {name = 'Orange', id = 38}, {name = 'Bright Orange', id = 138}, {name = 'Yellow', id = 88},
+        {name = 'Race Yellow', id = 89}, {name = 'Dark Green', id = 49}, {name = 'Racing Green', id = 50},
+        {name = 'Lime Green', id = 92}, {name = 'Midnight Blue', id = 141}, {name = 'Galaxy Blue', id = 61},
+        {name = 'Dark Blue', id = 62}, {name = 'Blue', id = 64}, {name = 'Light Blue', id = 74},
+        {name = 'Purple', id = 145}, {name = 'Spin Purple', id = 146}, {name = 'Gold', id = 37},
+        {name = 'Bronze', id = 90}
+    }
+    
+    local options = {}
+    local currentColor = GetVehicleExtraColours(vehicle)
+    
+    for _, color in ipairs(colors) do
+        local isActive = currentColor == color.id
+        table.insert(options, {
+            title = color.name,
+            description = isActive and 'Currently Active' or 'Click to apply',
+            icon = 'circle',
+            iconColor = isActive and '#00ff00' or '#1E90FF',
+            onSelect = function()
+                local _, pearl = GetVehicleExtraColours(vehicle)
+                SetVehicleExtraColours(vehicle, pearl or 0, color.id)
+                lib.notify({title = 'Wheel Color Changed', description = color.name, type = 'success'})
+                openWheelColorMenu()
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'wheel_color_menu',
+        title = 'Wheel Color',
+        menu = 'wheel_accessories_menu',
+        options = options
+    })
+    lib.showContext('wheel_color_menu')
+end
+
+local function openWheelsMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    local wheelCategories = {
+        {type = 0, name = 'Sport', icon = 'gauge'},
+        {type = 1, name = 'Muscle', icon = 'fire'},
+        {type = 2, name = 'Lowrider', icon = 'car-side'},
+        {type = 3, name = 'SUV', icon = 'truck'},
+        {type = 4, name = 'Offroad', icon = 'mountain'},
+        {type = 5, name = 'Tuner', icon = 'wrench'},
+        {type = 6, name = 'Bike Wheels', icon = 'motorcycle'},
+        {type = 7, name = 'High End', icon = 'gem'},
+        {type = 8, name = 'Benny\'s Original', icon = 'star'},
+        {type = 9, name = 'Benny\'s Bespoke', icon = 'crown'},
+        {type = 10, name = 'Open Wheel', icon = 'circle-notch'},
+        {type = 11, name = 'Street', icon = 'road'},
+        {type = 12, name = 'Track', icon = 'flag-checkered'}
+    }
+    
+    local options = {}
+    
+    -- Wheel Accessories at the top
+    table.insert(options, {
+        title = 'Wheel Accessories',
+        description = 'Custom tires, smoke, bulletproof',
+        icon = 'gears',
+        iconColor = '#FFA500',
+        onSelect = function()
+            openWheelAccessoriesMenu()
+        end
+    })
+    
+    -- Wheel categories
+    for _, category in ipairs(wheelCategories) do
+        table.insert(options, {
+            title = category.name,
+            description = 'Browse ' .. category.name:lower() .. ' wheels',
+            icon = category.icon,
+            iconColor = '#1E90FF',
+            onSelect = function()
+                openWheelModMenu(category.type, category.name, 'wheels_main_menu')
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'wheels_main_menu',
+        title = 'Wheels',
+        menu = 'visual_mods_menu',
+        options = options
+    })
+    lib.showContext('wheels_main_menu')
+end
+
+local function openSpecificModMenu(modType, modName, parentMenu)
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    SetVehicleModKit(vehicle, 0)
+    local maxMod = GetNumVehicleMods(vehicle, modType)
+    local currentMod = GetVehicleMod(vehicle, modType)
+    
+    -- Performance mod level names
+    local performanceLabels = {
+        [11] = {'Stock Engine', 'Level 1 Engine', 'Level 2 Engine', 'Level 3 Engine', 'Level 4 Engine'},
+        [12] = {'Stock Brakes', 'Street Brakes', 'Sport Brakes', 'Race Brakes'},
+        [13] = {'Stock Transmission', 'Street Transmission', 'Sport Transmission', 'Race Transmission'},
+        [15] = {'Stock Suspension', 'Lowered Suspension', 'Street Suspension', 'Sport Suspension', 'Competition Suspension'},
+        [16] = {'No Armor', 'Armor Upgrade 20%', 'Armor Upgrade 40%', 'Armor Upgrade 60%', 'Armor Upgrade 80%', 'Armor Upgrade 100%'}
+    }
+    
+    local options = {}
+    
+    -- Stock/Remove option
+    table.insert(options, {
+        title = 'Stock / Remove',
+        description = currentMod == -1 and 'Currently Active' or 'Click to apply',
+        icon = 'xmark',
+        iconColor = currentMod == -1 and '#00ff00' or '#ff0000',
+        onSelect = function()
+            RemoveVehicleMod(vehicle, modType)
+            lib.notify({title = modName, description = 'Removed', type = 'success'})
+            openSpecificModMenu(modType, modName, parentMenu)
+        end
+    })
+    
+    -- Mod options
+    for i = 0, maxMod - 1 do
+        local modDisplayName
+        
+        -- Check if we have a custom label for this performance mod
+        if performanceLabels[modType] and performanceLabels[modType][i + 1] then
+            modDisplayName = performanceLabels[modType][i + 1]
+        else
+            -- Try to get the label from the game
+            local modLabel = GetModTextLabel(vehicle, modType, i)
+            local labelText = GetLabelText(modLabel)
+            
+            -- If label is valid and not the same as input (which means it wasn't found)
+            if labelText and labelText ~= modLabel and labelText ~= 'NULL' then
+                modDisplayName = labelText
+            else
+                -- Fallback to generic names
+                modDisplayName = 'Upgrade ' .. (i + 1)
+            end
+        end
+        
+        local isActive = currentMod == i
+        
+        table.insert(options, {
+            title = modDisplayName,
+            description = isActive and 'Currently Active' or 'Click to apply',
+            icon = 'check',
+            iconColor = isActive and '#00ff00' or '#1E90FF',
+            onSelect = function()
+                SetVehicleMod(vehicle, modType, i, false)
+                lib.notify({title = modName, description = modDisplayName, type = 'success'})
+                openSpecificModMenu(modType, modName, parentMenu)
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'specific_mod_menu',
+        title = modName,
+        menu = parentMenu,
+        options = options
+    })
+    lib.showContext('specific_mod_menu')
+end
+
+local function openWindowTintMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    local tints = {
+        {name = 'None', id = 0},
+        {name = 'Pure Black', id = 1},
+        {name = 'Dark Smoke', id = 2},
+        {name = 'Light Smoke', id = 3},
+        {name = 'Stock', id = 4},
+        {name = 'Limo', id = 5},
+        {name = 'Green', id = 6}
+    }
+    
+    local options = {}
+    local currentTint = GetVehicleWindowTint(vehicle)
+    
+    for _, tint in ipairs(tints) do
+        local isActive = currentTint == tint.id
+        table.insert(options, {
+            title = tint.name,
+            description = isActive and 'Currently Active' or 'Click to apply',
+            icon = 'window-maximize',
+            iconColor = isActive and '#00ff00' or '#696969',
+            onSelect = function()
+                SetVehicleWindowTint(vehicle, tint.id)
+                lib.notify({title = 'Window Tint Changed', description = tint.name, type = 'success'})
+                openWindowTintMenu()
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'window_tint_menu',
+        title = 'Window Tint',
+        menu = 'visual_mods_menu',
+        options = options
+    })
+    lib.showContext('window_tint_menu')
+end
+
+local function openNeonLightsMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    local neonPositions = {
+        {id = 0, name = 'Left'},
+        {id = 1, name = 'Right'},
+        {id = 2, name = 'Front'},
+        {id = 3, name = 'Back'}
+    }
+    
+    local options = {}
+    
+    -- Toggle all neons
+    local allEnabled = true
+    for _, pos in ipairs(neonPositions) do
+        if not IsVehicleNeonLightEnabled(vehicle, pos.id) then
+            allEnabled = false
+            break
+        end
+    end
+    
+    table.insert(options, {
+        title = allEnabled and 'Disable All Neons' or 'Enable All Neons',
+        icon = 'lightbulb',
+        iconColor = allEnabled and '#ff0000' or '#00ff00',
+        onSelect = function()
+            for _, pos in ipairs(neonPositions) do
+                SetVehicleNeonLightEnabled(vehicle, pos.id, not allEnabled)
+            end
+            lib.notify({title = 'Neon Lights', description = allEnabled and 'All Disabled' or 'All Enabled', type = 'success'})
+            openNeonLightsMenu()
+        end
+    })
+    
+    -- Individual neon positions
+    for _, pos in ipairs(neonPositions) do
+        local isEnabled = IsVehicleNeonLightEnabled(vehicle, pos.id)
+        table.insert(options, {
+            title = pos.name .. ' Neon',
+            description = isEnabled and 'Currently ON' or 'Currently OFF',
+            icon = 'lightbulb',
+            iconColor = isEnabled and '#00ff00' or '#ff0000',
+            onSelect = function()
+                SetVehicleNeonLightEnabled(vehicle, pos.id, not isEnabled)
+                lib.notify({title = pos.name .. ' Neon', description = isEnabled and 'Disabled' or 'Enabled', type = 'success'})
+                openNeonLightsMenu()
+            end
+        })
+    end
+    
+    -- Neon color option
+    table.insert(options, {
+        title = 'Change Neon Color',
+        description = 'Set custom RGB color',
+        icon = 'palette',
+        iconColor = '#FF1493',
+        onSelect = function()
+            local r, g, b = GetVehicleNeonLightsColour(vehicle)
+            local input = lib.inputDialog('Neon Color (RGB)', {
+                {type = 'number', label = 'Red (0-255)', default = r, min = 0, max = 255, required = true},
+                {type = 'number', label = 'Green (0-255)', default = g, min = 0, max = 255, required = true},
+                {type = 'number', label = 'Blue (0-255)', default = b, min = 0, max = 255, required = true}
+            })
+            
+            if input then
+                SetVehicleNeonLightsColour(vehicle, input[1], input[2], input[3])
+                lib.notify({title = 'Neon Color Changed', type = 'success'})
+            end
+            openNeonLightsMenu()
+        end
+    })
+    
+    lib.registerContext({
+        id = 'neon_lights_menu',
+        title = 'Neon Lights',
+        menu = 'visual_mods_menu',
+        options = options
+    })
+    lib.showContext('neon_lights_menu')
+end
+
+local function openPerformanceModsMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    SetVehicleModKit(vehicle, 0)
+    
+    local performanceMods = {
+        {modType = 11, name = 'Engine', icon = 'gears'},
+        {modType = 12, name = 'Brakes', icon = 'circle-stop'},
+        {modType = 13, name = 'Transmission', icon = 'gauge-high'},
+        {modType = 15, name = 'Suspension', icon = 'car-side'},
+        {modType = 16, name = 'Armor', icon = 'shield-halved'}
+    }
+    
+    local options = {}
+    
+    -- Turbo option
+    local hasTurbo = IsToggleModOn(vehicle, 18)
+    table.insert(options, {
+        title = 'Turbo',
+        description = hasTurbo and 'Currently ON' or 'Currently OFF',
+        icon = 'wind',
+        iconColor = hasTurbo and '#00ff00' or '#ff0000',
+        onSelect = function()
+            ToggleVehicleMod(vehicle, 18, not hasTurbo)
+            lib.notify({title = 'Turbo', description = hasTurbo and 'Disabled' or 'Enabled', type = 'success'})
+            openPerformanceModsMenu()
+        end
+    })
+    
+    -- Performance mods
+    for _, mod in ipairs(performanceMods) do
+        local maxMod = GetNumVehicleMods(vehicle, mod.modType)
+        if maxMod > 0 then
+            table.insert(options, {
+                title = mod.name,
+                description = 'Configure ' .. mod.name:lower() .. ' upgrades',
+                icon = mod.icon,
+                iconColor = '#1E90FF',
+                onSelect = function()
+                    openSpecificModMenu(mod.modType, mod.name, 'performance_mods_menu')
+                end
+            })
+        end
+    end
+    
+    if #options == 1 then
+        table.insert(options, {
+            title = 'No Performance Mods Available',
+            icon = 'circle-xmark',
+            disabled = true
+        })
+    end
+    
+    lib.registerContext({
+        id = 'performance_mods_menu',
+        title = 'Performance Upgrades',
+        menu = 'vehicle_customization_menu',
+        options = options
+    })
+    lib.showContext('performance_mods_menu')
+end
+
+local function openVisualModsMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    SetVehicleModKit(vehicle, 0)
+    
+    local visualMods = {
+        {modType = 0, name = 'Spoilers', icon = 'car-rear'},
+        {modType = 1, name = 'Front Bumper', icon = 'car-burst'},
+        {modType = 2, name = 'Rear Bumper', icon = 'car-burst'},
+        {modType = 3, name = 'Side Skirt', icon = 'car-side'},
+        {modType = 4, name = 'Exhaust', icon = 'wind'},
+        {modType = 5, name = 'Frame', icon = 'border-all'},
+        {modType = 6, name = 'Grille', icon = 'table-cells'},
+        {modType = 7, name = 'Hood', icon = 'car'},
+        {modType = 8, name = 'Fender', icon = 'car'},
+        {modType = 9, name = 'Right Fender', icon = 'car'},
+        {modType = 10, name = 'Roof', icon = 'house'},
+        {modType = 25, name = 'Plate Holder', icon = 'address-card'},
+        {modType = 26, name = 'Vanity Plates', icon = 'address-card'},
+        {modType = 27, name = 'Trim', icon = 'paintbrush'},
+        {modType = 28, name = 'Ornaments', icon = 'star'},
+        {modType = 29, name = 'Dashboard', icon = 'gauge'},
+        {modType = 30, name = 'Dial', icon = 'clock'},
+        {modType = 31, name = 'Door Speaker', icon = 'volume-high'},
+        {modType = 32, name = 'Seats', icon = 'chair'},
+        {modType = 33, name = 'Steering Wheel', icon = 'circle-notch'},
+        {modType = 34, name = 'Shifter Leavers', icon = 'gear'},
+        {modType = 35, name = 'Plaques', icon = 'award'},
+        {modType = 36, name = 'Speakers', icon = 'volume-up'},
+        {modType = 37, name = 'Trunk', icon = 'box'},
+        {modType = 38, name = 'Hydraulics', icon = 'arrows-up-down'},
+        {modType = 39, name = 'Engine Block', icon = 'gears'},
+        {modType = 40, name = 'Air Filter', icon = 'filter'},
+        {modType = 41, name = 'Struts', icon = 'bars'},
+        {modType = 42, name = 'Arch Cover', icon = 'car'},
+        {modType = 43, name = 'Aerials', icon = 'tower-broadcast'},
+        {modType = 44, name = 'Trim 2', icon = 'paintbrush'},
+        {modType = 45, name = 'Tank', icon = 'gas-pump'},
+        {modType = 46, name = 'Windows', icon = 'window-maximize'},
+        {modType = 48, name = 'Livery', icon = 'palette'}
+    }
+    
+    local options = {}
+    
+    -- Window tint option
+    table.insert(options, {
+        title = 'Window Tint',
+        description = 'Change window tint level',
+        icon = 'window-maximize',
+        iconColor = '#696969',
+        onSelect = function()
+            openWindowTintMenu()
+        end
+    })
+    
+    -- Neon lights option
+    table.insert(options, {
+        title = 'Neon Lights',
+        description = 'Configure neon underglow',
+        icon = 'lightbulb',
+        iconColor = '#FF1493',
+        onSelect = function()
+            openNeonLightsMenu()
+        end
+    })
+    
+    -- Wheels option (new categorized menu)
+    table.insert(options, {
+        title = 'Wheels',
+        description = 'Browse wheels by category',
+        icon = 'circle',
+        iconColor = '#FFD700',
+        onSelect = function()
+            openWheelsMenu()
+        end
+    })
+    
+    -- Visual mods
+    for _, mod in ipairs(visualMods) do
+        local maxMod = GetNumVehicleMods(vehicle, mod.modType)
+        if maxMod > 0 then
+            table.insert(options, {
+                title = mod.name,
+                description = 'Configure ' .. mod.name:lower(),
+                icon = mod.icon,
+                iconColor = '#9370DB',
+                onSelect = function()
+                    openSpecificModMenu(mod.modType, mod.name, 'visual_mods_menu')
+                end
+            })
+        end
+    end
+    
+    lib.registerContext({
+        id = 'visual_mods_menu',
+        title = 'Visual Modifications',
+        menu = 'vehicle_customization_menu',
+        options = options
+    })
+    lib.showContext('visual_mods_menu')
+end
+
+local function openWindowTintMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    local tints = {
+        {name = 'None', id = 0},
+        {name = 'Pure Black', id = 1},
+        {name = 'Dark Smoke', id = 2},
+        {name = 'Light Smoke', id = 3},
+        {name = 'Stock', id = 4},
+        {name = 'Limo', id = 5},
+        {name = 'Green', id = 6}
+    }
+    
+    local options = {}
+    local currentTint = GetVehicleWindowTint(vehicle)
+    
+    for _, tint in ipairs(tints) do
+        local isActive = currentTint == tint.id
+        table.insert(options, {
+            title = tint.name,
+            description = isActive and 'Currently Active' or 'Click to apply',
+            icon = 'window-maximize',
+            iconColor = isActive and '#00ff00' or '#696969',
+            onSelect = function()
+                SetVehicleWindowTint(vehicle, tint.id)
+                lib.notify({title = 'Window Tint Changed', description = tint.name, type = 'success'})
+                openWindowTintMenu()
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'window_tint_menu',
+        title = 'Window Tint',
+        menu = 'visual_mods_menu',
+        options = options
+    })
+    lib.showContext('window_tint_menu')
+end
+
+local function openNeonLightsMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    local neonPositions = {
+        {id = 0, name = 'Left'},
+        {id = 1, name = 'Right'},
+        {id = 2, name = 'Front'},
+        {id = 3, name = 'Back'}
+    }
+    
+    local options = {}
+    
+    -- Toggle all neons
+    local allEnabled = true
+    for _, pos in ipairs(neonPositions) do
+        if not IsVehicleNeonLightEnabled(vehicle, pos.id) then
+            allEnabled = false
+            break
+        end
+    end
+    
+    table.insert(options, {
+        title = allEnabled and 'Disable All Neons' or 'Enable All Neons',
+        icon = 'lightbulb',
+        iconColor = allEnabled and '#ff0000' or '#00ff00',
+        onSelect = function()
+            for _, pos in ipairs(neonPositions) do
+                SetVehicleNeonLightEnabled(vehicle, pos.id, not allEnabled)
+            end
+            lib.notify({title = 'Neon Lights', description = allEnabled and 'All Disabled' or 'All Enabled', type = 'success'})
+            openNeonLightsMenu()
+        end
+    })
+    
+    -- Individual neon positions
+    for _, pos in ipairs(neonPositions) do
+        local isEnabled = IsVehicleNeonLightEnabled(vehicle, pos.id)
+        table.insert(options, {
+            title = pos.name .. ' Neon',
+            description = isEnabled and 'Currently ON' or 'Currently OFF',
+            icon = 'lightbulb',
+            iconColor = isEnabled and '#00ff00' or '#ff0000',
+            onSelect = function()
+                SetVehicleNeonLightEnabled(vehicle, pos.id, not isEnabled)
+                lib.notify({title = pos.name .. ' Neon', description = isEnabled and 'Disabled' or 'Enabled', type = 'success'})
+                openNeonLightsMenu()
+            end
+        })
+    end
+    
+    -- Neon color option
+    table.insert(options, {
+        title = 'Change Neon Color',
+        description = 'Set custom RGB color',
+        icon = 'palette',
+        iconColor = '#FF1493',
+        onSelect = function()
+            local r, g, b = GetVehicleNeonLightsColour(vehicle)
+            local input = lib.inputDialog('Neon Color (RGB)', {
+                {type = 'number', label = 'Red (0-255)', default = r, min = 0, max = 255, required = true},
+                {type = 'number', label = 'Green (0-255)', default = g, min = 0, max = 255, required = true},
+                {type = 'number', label = 'Blue (0-255)', default = b, min = 0, max = 255, required = true}
+            })
+            
+            if input then
+                SetVehicleNeonLightsColour(vehicle, input[1], input[2], input[3])
+                lib.notify({title = 'Neon Color Changed', type = 'success'})
+            end
+            openNeonLightsMenu()
+        end
+    })
+    
+    lib.registerContext({
+        id = 'neon_lights_menu',
+        title = 'Neon Lights',
+        menu = 'visual_mods_menu',
+        options = options
+    })
+    lib.showContext('neon_lights_menu')
+end
+
+local function openWheelModMenu(wheelType, wheelTypeName, parentMenu)
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    SetVehicleModKit(vehicle, 0)
+    
+    -- Set the wheel type first
+    SetVehicleWheelType(vehicle, wheelType)
+    
+    local maxMod = GetNumVehicleMods(vehicle, 23) -- 23 is front wheels
+    local currentMod = GetVehicleMod(vehicle, 23)
+    
+    local options = {}
+    
+    -- Stock wheels option
+    table.insert(options, {
+        title = 'Stock Wheels',
+        description = currentMod == -1 and 'Currently Active' or 'Click to apply',
+        icon = 'circle',
+        iconColor = currentMod == -1 and '#00ff00' or '#ff0000',
+        onSelect = function()
+            RemoveVehicleMod(vehicle, 23)
+            lib.notify({title = 'Wheels', description = 'Stock wheels applied', type = 'success'})
+            openWheelModMenu(wheelType, wheelTypeName, parentMenu)
+        end
+    })
+    
+    -- Wheel options
+    for i = 0, maxMod - 1 do
+        local modLabel = GetModTextLabel(vehicle, 23, i)
+        local labelText = GetLabelText(modLabel)
+        local modDisplayName
+        
+        if labelText and labelText ~= modLabel and labelText ~= 'NULL' then
+            modDisplayName = labelText
+        else
+            modDisplayName = wheelTypeName .. ' Wheel ' .. (i + 1)
+        end
+        
+        local isActive = currentMod == i
+        
+        table.insert(options, {
+            title = modDisplayName,
+            description = isActive and 'Currently Active' or 'Click to apply',
+            icon = 'circle',
+            iconColor = isActive and '#00ff00' or '#1E90FF',
+            onSelect = function()
+                SetVehicleWheelType(vehicle, wheelType)
+                SetVehicleMod(vehicle, 23, i, false)
+                lib.notify({title = 'Wheels', description = modDisplayName, type = 'success'})
+                openWheelModMenu(wheelType, wheelTypeName, parentMenu)
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'wheel_mod_menu',
+        title = wheelTypeName .. ' Wheels',
+        menu = parentMenu,
+        options = options
+    })
+    lib.showContext('wheel_mod_menu')
+end
+
+local function openWheelAccessoriesMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    SetVehicleModKit(vehicle, 0)
+    
+    local options = {}
+    
+    -- Custom Tires
+    local hasCustomTires = GetVehicleModVariation(vehicle, 23)
+    table.insert(options, {
+        title = 'Custom Tires',
+        description = hasCustomTires and 'Currently ON' or 'Currently OFF',
+        icon = 'circle-notch',
+        iconColor = hasCustomTires and '#00ff00' or '#ff0000',
+        onSelect = function()
+            local currentMod = GetVehicleMod(vehicle, 23)
+            if currentMod ~= -1 then
+                SetVehicleMod(vehicle, 23, currentMod, not hasCustomTires)
+                lib.notify({title = 'Custom Tires', description = hasCustomTires and 'Disabled' or 'Enabled', type = 'success'})
+            else
+                lib.notify({title = 'Error', description = 'Install custom wheels first', type = 'error'})
+            end
+            openWheelAccessoriesMenu()
+        end
+    })
+    
+    -- Tire Smoke Color
+    table.insert(options, {
+        title = 'Tire Smoke Color',
+        description = 'Set custom RGB color',
+        icon = 'cloud',
+        iconColor = '#B0C4DE',
+        onSelect = function()
+            local r, g, b = GetVehicleTyreSmokeColor(vehicle)
+            local input = lib.inputDialog('Tire Smoke Color (RGB)', {
+                {type = 'number', label = 'Red (0-255)', default = r, min = 0, max = 255, required = true},
+                {type = 'number', label = 'Green (0-255)', default = g, min = 0, max = 255, required = true},
+                {type = 'number', label = 'Blue (0-255)', default = b, min = 0, max = 255, required = true}
+            })
+            
+            if input then
+                SetVehicleModKit(vehicle, 0)
+                ToggleVehicleMod(vehicle, 20, true)
+                SetVehicleTyreSmokeColor(vehicle, input[1], input[2], input[3])
+                lib.notify({title = 'Tire Smoke Color Changed', type = 'success'})
+            end
+            openWheelAccessoriesMenu()
+        end
+    })
+    
+    -- Bulletproof Tires
+    local hasBulletproofTires = GetVehicleTyresCanBurst(vehicle) == false
+    table.insert(options, {
+        title = 'Bulletproof Tires',
+        description = hasBulletproofTires and 'Currently ON' or 'Currently OFF',
+        icon = 'shield',
+        iconColor = hasBulletproofTires and '#00ff00' or '#ff0000',
+        onSelect = function()
+            SetVehicleTyresCanBurst(vehicle, hasBulletproofTires)
+            lib.notify({title = 'Bulletproof Tires', description = hasBulletproofTires and 'Disabled' or 'Enabled', type = 'success'})
+            openWheelAccessoriesMenu()
+        end
+    })
+    
+    -- Wheel Color (if custom wheels are installed)
+    local currentMod = GetVehicleMod(vehicle, 23)
+    if currentMod ~= -1 then
+        table.insert(options, {
+            title = 'Change Wheel Color',
+            description = 'Modify wheel rim color',
+            icon = 'palette',
+            iconColor = '#FFD700',
+            onSelect = function()
+                openWheelColorMenu()
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'wheel_accessories_menu',
+        title = 'Wheel Accessories',
+        menu = 'wheels_main_menu',
+        options = options
+    })
+    lib.showContext('wheel_accessories_menu')
+end
+
+local function openWheelColorMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    local colors = {
+        {name = 'Black', id = 0}, {name = 'Carbon Black', id = 147}, {name = 'Graphite', id = 1},
+        {name = 'Steel', id = 3}, {name = 'Silver', id = 4}, {name = 'Frost White', id = 111},
+        {name = 'Red', id = 27}, {name = 'Torino Red', id = 28}, {name = 'Formula Red', id = 29},
+        {name = 'Blaze Red', id = 30}, {name = 'Hot Pink', id = 135}, {name = 'Salmon Pink', id = 136},
+        {name = 'Orange', id = 38}, {name = 'Bright Orange', id = 138}, {name = 'Yellow', id = 88},
+        {name = 'Race Yellow', id = 89}, {name = 'Dark Green', id = 49}, {name = 'Racing Green', id = 50},
+        {name = 'Lime Green', id = 92}, {name = 'Midnight Blue', id = 141}, {name = 'Galaxy Blue', id = 61},
+        {name = 'Dark Blue', id = 62}, {name = 'Blue', id = 64}, {name = 'Light Blue', id = 74},
+        {name = 'Purple', id = 145}, {name = 'Spin Purple', id = 146}, {name = 'Gold', id = 37},
+        {name = 'Bronze', id = 90}
+    }
+    
+    local options = {}
+    local currentColor = GetVehicleExtraColours(vehicle)
+    
+    for _, color in ipairs(colors) do
+        local isActive = currentColor == color.id
+        table.insert(options, {
+            title = color.name,
+            description = isActive and 'Currently Active' or 'Click to apply',
+            icon = 'circle',
+            iconColor = isActive and '#00ff00' or '#1E90FF',
+            onSelect = function()
+                local _, pearl = GetVehicleExtraColours(vehicle)
+                SetVehicleExtraColours(vehicle, pearl or 0, color.id)
+                lib.notify({title = 'Wheel Color Changed', description = color.name, type = 'success'})
+                openWheelColorMenu()
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'wheel_color_menu',
+        title = 'Wheel Color',
+        menu = 'wheel_accessories_menu',
+        options = options
+    })
+    lib.showContext('wheel_color_menu')
+end
+
+local function openWheelsMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    local wheelCategories = {
+        {type = 0, name = 'Sport', icon = 'gauge'},
+        {type = 1, name = 'Muscle', icon = 'fire'},
+        {type = 2, name = 'Lowrider', icon = 'car-side'},
+        {type = 3, name = 'SUV', icon = 'truck'},
+        {type = 4, name = 'Offroad', icon = 'mountain'},
+        {type = 5, name = 'Tuner', icon = 'wrench'},
+        {type = 6, name = 'Bike Wheels', icon = 'motorcycle'},
+        {type = 7, name = 'High End', icon = 'gem'},
+        {type = 8, name = 'Benny\'s Original', icon = 'star'},
+        {type = 9, name = 'Benny\'s Bespoke', icon = 'crown'},
+        {type = 10, name = 'Open Wheel', icon = 'circle-notch'},
+        {type = 11, name = 'Street', icon = 'road'},
+        {type = 12, name = 'Track', icon = 'flag-checkered'}
+    }
+    
+    local options = {}
+    
+    -- Wheel Accessories at the top
+    table.insert(options, {
+        title = 'Wheel Accessories',
+        description = 'Custom tires, smoke, bulletproof',
+        icon = 'gears',
+        iconColor = '#FFA500',
+        onSelect = function()
+            openWheelAccessoriesMenu()
+        end
+    })
+    
+    -- Wheel categories
+    for _, category in ipairs(wheelCategories) do
+        table.insert(options, {
+            title = category.name,
+            description = 'Browse ' .. category.name:lower() .. ' wheels',
+            icon = category.icon,
+            iconColor = '#1E90FF',
+            onSelect = function()
+                openWheelModMenu(category.type, category.name, 'wheels_main_menu')
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'wheels_main_menu',
+        title = 'Wheels',
+        menu = 'visual_mods_menu',
+        options = options
+    })
+    lib.showContext('wheels_main_menu')
+end
+
+local function openSpecificModMenu(modType, modName, parentMenu)
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    SetVehicleModKit(vehicle, 0)
+    local maxMod = GetNumVehicleMods(vehicle, modType)
+    local currentMod = GetVehicleMod(vehicle, modType)
+    
+    -- Performance mod level names
+    local performanceLabels = {
+        [11] = {'Stock Engine', 'Level 1 Engine', 'Level 2 Engine', 'Level 3 Engine', 'Level 4 Engine'},
+        [12] = {'Stock Brakes', 'Street Brakes', 'Sport Brakes', 'Race Brakes'},
+        [13] = {'Stock Transmission', 'Street Transmission', 'Sport Transmission', 'Race Transmission'},
+        [15] = {'Stock Suspension', 'Lowered Suspension', 'Street Suspension', 'Sport Suspension', 'Competition Suspension'},
+        [16] = {'No Armor', 'Armor Upgrade 20%', 'Armor Upgrade 40%', 'Armor Upgrade 60%', 'Armor Upgrade 80%', 'Armor Upgrade 100%'}
+    }
+    
+    local options = {}
+    
+    -- Stock/Remove option
+    table.insert(options, {
+        title = 'Stock / Remove',
+        description = currentMod == -1 and 'Currently Active' or 'Click to apply',
+        icon = 'xmark',
+        iconColor = currentMod == -1 and '#00ff00' or '#ff0000',
+        onSelect = function()
+            RemoveVehicleMod(vehicle, modType)
+            lib.notify({title = modName, description = 'Removed', type = 'success'})
+            openSpecificModMenu(modType, modName, parentMenu)
+        end
+    })
+    
+    -- Mod options
+    for i = 0, maxMod - 1 do
+        local modDisplayName
+        
+        -- Check if we have a custom label for this performance mod
+        if performanceLabels[modType] and performanceLabels[modType][i + 1] then
+            modDisplayName = performanceLabels[modType][i + 1]
+        else
+            -- Try to get the label from the game
+            local modLabel = GetModTextLabel(vehicle, modType, i)
+            local labelText = GetLabelText(modLabel)
+            
+            -- If label is valid and not the same as input (which means it wasn't found)
+            if labelText and labelText ~= modLabel and labelText ~= 'NULL' then
+                modDisplayName = labelText
+            else
+                -- Fallback to generic names
+                modDisplayName = 'Upgrade ' .. (i + 1)
+            end
+        end
+        
+        local isActive = currentMod == i
+        
+        table.insert(options, {
+            title = modDisplayName,
+            description = isActive and 'Currently Active' or 'Click to apply',
+            icon = 'check',
+            iconColor = isActive and '#00ff00' or '#1E90FF',
+            onSelect = function()
+                SetVehicleMod(vehicle, modType, i, false)
+                lib.notify({title = modName, description = modDisplayName, type = 'success'})
+                openSpecificModMenu(modType, modName, parentMenu)
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'specific_mod_menu',
+        title = modName,
+        menu = parentMenu,
+        options = options
+    })
+    lib.showContext('specific_mod_menu')
+end
+
+local function openWindowTintMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    local tints = {
+        {name = 'None', id = 0},
+        {name = 'Pure Black', id = 1},
+        {name = 'Dark Smoke', id = 2},
+        {name = 'Light Smoke', id = 3},
+        {name = 'Stock', id = 4},
+        {name = 'Limo', id = 5},
+        {name = 'Green', id = 6}
+    }
+    
+    local options = {}
+    local currentTint = GetVehicleWindowTint(vehicle)
+    
+    for _, tint in ipairs(tints) do
+        local isActive = currentTint == tint.id
+        table.insert(options, {
+            title = tint.name,
+            description = isActive and 'Currently Active' or 'Click to apply',
+            icon = 'window-maximize',
+            iconColor = isActive and '#00ff00' or '#696969',
+            onSelect = function()
+                SetVehicleWindowTint(vehicle, tint.id)
+                lib.notify({title = 'Window Tint Changed', description = tint.name, type = 'success'})
+                openWindowTintMenu()
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'window_tint_menu',
+        title = 'Window Tint',
+        menu = 'visual_mods_menu',
+        options = options
+    })
+    lib.showContext('window_tint_menu')
+end
+
+local function openNeonLightsMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    local neonPositions = {
+        {id = 0, name = 'Left'},
+        {id = 1, name = 'Right'},
+        {id = 2, name = 'Front'},
+        {id = 3, name = 'Back'}
+    }
+    
+    local options = {}
+    
+    -- Toggle all neons
+    local allEnabled = true
+    for _, pos in ipairs(neonPositions) do
+        if not IsVehicleNeonLightEnabled(vehicle, pos.id) then
+            allEnabled = false
+            break
+        end
+    end
+    
+    table.insert(options, {
+        title = allEnabled and 'Disable All Neons' or 'Enable All Neons',
+        icon = 'lightbulb',
+        iconColor = allEnabled and '#ff0000' or '#00ff00',
+        onSelect = function()
+            for _, pos in ipairs(neonPositions) do
+                SetVehicleNeonLightEnabled(vehicle, pos.id, not allEnabled)
+            end
+            lib.notify({title = 'Neon Lights', description = allEnabled and 'All Disabled' or 'All Enabled', type = 'success'})
+            openNeonLightsMenu()
+        end
+    })
+    
+    -- Individual neon positions
+    for _, pos in ipairs(neonPositions) do
+        local isEnabled = IsVehicleNeonLightEnabled(vehicle, pos.id)
+        table.insert(options, {
+            title = pos.name .. ' Neon',
+            description = isEnabled and 'Currently ON' or 'Currently OFF',
+            icon = 'lightbulb',
+            iconColor = isEnabled and '#00ff00' or '#ff0000',
+            onSelect = function()
+                SetVehicleNeonLightEnabled(vehicle, pos.id, not isEnabled)
+                lib.notify({title = pos.name .. ' Neon', description = isEnabled and 'Disabled' or 'Enabled', type = 'success'})
+                openNeonLightsMenu()
+            end
+        })
+    end
+    
+    -- Neon color option
+    table.insert(options, {
+        title = 'Change Neon Color',
+        description = 'Set custom RGB color',
+        icon = 'palette',
+        iconColor = '#FF1493',
+        onSelect = function()
+            local r, g, b = GetVehicleNeonLightsColour(vehicle)
+            local input = lib.inputDialog('Neon Color (RGB)', {
+                {type = 'number', label = 'Red (0-255)', default = r, min = 0, max = 255, required = true},
+                {type = 'number', label = 'Green (0-255)', default = g, min = 0, max = 255, required = true},
+                {type = 'number', label = 'Blue (0-255)', default = b, min = 0, max = 255, required = true}
+            })
+            
+            if input then
+                SetVehicleNeonLightsColour(vehicle, input[1], input[2], input[3])
+                lib.notify({title = 'Neon Color Changed', type = 'success'})
+            end
+            openNeonLightsMenu()
+        end
+    })
+    
+    lib.registerContext({
+        id = 'neon_lights_menu',
+        title = 'Neon Lights',
+        menu = 'visual_mods_menu',
+        options = options
+    })
+    lib.showContext('neon_lights_menu')
+end
+
+local function openPerformanceModsMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    SetVehicleModKit(vehicle, 0)
+    
+    local performanceMods = {
+        {modType = 11, name = 'Engine', icon = 'gears'},
+        {modType = 12, name = 'Brakes', icon = 'circle-stop'},
+        {modType = 13, name = 'Transmission', icon = 'gauge-high'},
+        {modType = 15, name = 'Suspension', icon = 'car-side'},
+        {modType = 16, name = 'Armor', icon = 'shield-halved'}
+    }
+    
+    local options = {}
+    
+    -- Turbo option
+    local hasTurbo = IsToggleModOn(vehicle, 18)
+    table.insert(options, {
+        title = 'Turbo',
+        description = hasTurbo and 'Currently ON' or 'Currently OFF',
+        icon = 'wind',
+        iconColor = hasTurbo and '#00ff00' or '#ff0000',
+        onSelect = function()
+            ToggleVehicleMod(vehicle, 18, not hasTurbo)
+            lib.notify({title = 'Turbo', description = hasTurbo and 'Disabled' or 'Enabled', type = 'success'})
+            openPerformanceModsMenu()
+        end
+    })
+    
+    -- Performance mods
+    for _, mod in ipairs(performanceMods) do
+        local maxMod = GetNumVehicleMods(vehicle, mod.modType)
+        if maxMod > 0 then
+            table.insert(options, {
+                title = mod.name,
+                description = 'Configure ' .. mod.name:lower() .. ' upgrades',
+                icon = mod.icon,
+                iconColor = '#1E90FF',
+                onSelect = function()
+                    openSpecificModMenu(mod.modType, mod.name, 'performance_mods_menu')
+                end
+            })
+        end
+    end
+    
+    if #options == 1 then
+        table.insert(options, {
+            title = 'No Performance Mods Available',
+            icon = 'circle-xmark',
+            disabled = true
+        })
+    end
+    
+    lib.registerContext({
+        id = 'performance_mods_menu',
+        title = 'Performance Upgrades',
+        menu = 'vehicle_customization_menu',
+        options = options
+    })
+    lib.showContext('performance_mods_menu')
+end
+
+local function openVisualModsMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    SetVehicleModKit(vehicle, 0)
+    
+    local visualMods = {
+        {modType = 0, name = 'Spoilers', icon = 'car-rear'},
+        {modType = 1, name = 'Front Bumper', icon = 'car-burst'},
+        {modType = 2, name = 'Rear Bumper', icon = 'car-burst'},
+        {modType = 3, name = 'Side Skirt', icon = 'car-side'},
+        {modType = 4, name = 'Exhaust', icon = 'wind'},
+        {modType = 5, name = 'Frame', icon = 'border-all'},
+        {modType = 6, name = 'Grille', icon = 'table-cells'},
+        {modType = 7, name = 'Hood', icon = 'car'},
+        {modType = 8, name = 'Fender', icon = 'car'},
+        {modType = 9, name = 'Right Fender', icon = 'car'},
+        {modType = 10, name = 'Roof', icon = 'house'},
+        {modType = 25, name = 'Plate Holder', icon = 'address-card'},
+        {modType = 26, name = 'Vanity Plates', icon = 'address-card'},
+        {modType = 27, name = 'Trim', icon = 'paintbrush'},
+        {modType = 28, name = 'Ornaments', icon = 'star'},
+        {modType = 29, name = 'Dashboard', icon = 'gauge'},
+        {modType = 30, name = 'Dial', icon = 'clock'},
+        {modType = 31, name = 'Door Speaker', icon = 'volume-high'},
+        {modType = 32, name = 'Seats', icon = 'chair'},
+        {modType = 33, name = 'Steering Wheel', icon = 'circle-notch'},
+        {modType = 34, name = 'Shifter Leavers', icon = 'gear'},
+        {modType = 35, name = 'Plaques', icon = 'award'},
+        {modType = 36, name = 'Speakers', icon = 'volume-up'},
+        {modType = 37, name = 'Trunk', icon = 'box'},
+        {modType = 38, name = 'Hydraulics', icon = 'arrows-up-down'},
+        {modType = 39, name = 'Engine Block', icon = 'gears'},
+        {modType = 40, name = 'Air Filter', icon = 'filter'},
+        {modType = 41, name = 'Struts', icon = 'bars'},
+        {modType = 42, name = 'Arch Cover', icon = 'car'},
+        {modType = 43, name = 'Aerials', icon = 'tower-broadcast'},
+        {modType = 44, name = 'Trim 2', icon = 'paintbrush'},
+        {modType = 45, name = 'Tank', icon = 'gas-pump'},
+        {modType = 46, name = 'Windows', icon = 'window-maximize'},
+        {modType = 48, name = 'Livery', icon = 'palette'}
+    }
+    
+    local options = {}
+    
+    -- Window tint option
+    table.insert(options, {
+        title = 'Window Tint',
+        description = 'Change window tint level',
+        icon = 'window-maximize',
+        iconColor = '#696969',
+        onSelect = function()
+            openWindowTintMenu()
+        end
+    })
+    
+    -- Neon lights option
+    table.insert(options, {
+        title = 'Neon Lights',
+        description = 'Configure neon underglow',
+        icon = 'lightbulb',
+        iconColor = '#FF1493',
+        onSelect = function()
+            openNeonLightsMenu()
+        end
+    })
+    
+    -- Wheels option (new categorized menu)
+    table.insert(options, {
+        title = 'Wheels',
+        description = 'Browse wheels by category',
+        icon = 'circle',
+        iconColor = '#FFD700',
+        onSelect = function()
+            openWheelsMenu()
+        end
+    })
+    
+    -- Visual mods
+    for _, mod in ipairs(visualMods) do
+        local maxMod = GetNumVehicleMods(vehicle, mod.modType)
+        if maxMod > 0 then
+            table.insert(options, {
+                title = mod.name,
+                description = 'Configure ' .. mod.name:lower(),
+                icon = mod.icon,
+                iconColor = '#9370DB',
+                onSelect = function()
+                    openSpecificModMenu(mod.modType, mod.name, 'visual_mods_menu')
+                end
+            })
+        end
+    end
+    
+    lib.registerContext({
+        id = 'visual_mods_menu',
+        title = 'Visual Modifications',
+        menu = 'vehicle_customization_menu',
+        options = options
+    })
+    lib.showContext('visual_mods_menu')
+end
+
+local function openWindowTintMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    local tints = {
+        {name = 'None', id = 0},
+        {name = 'Pure Black', id = 1},
+        {name = 'Dark Smoke', id = 2},
+        {name = 'Light Smoke', id = 3},
+        {name = 'Stock', id = 4},
+        {name = 'Limo', id = 5},
+        {name = 'Green', id = 6}
+    }
+    
+    local options = {}
+    local currentTint = GetVehicleWindowTint(vehicle)
+    
+    for _, tint in ipairs(tints) do
+        local isActive = currentTint == tint.id
+        table.insert(options, {
+            title = tint.name,
+            description = isActive and 'Currently Active' or 'Click to apply',
+            icon = 'window-maximize',
+            iconColor = isActive and '#00ff00' or '#696969',
+            onSelect = function()
+                SetVehicleWindowTint(vehicle, tint.id)
+                lib.notify({title = 'Window Tint Changed', description = tint.name, type = 'success'})
+                openWindowTintMenu()
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'window_tint_menu',
+        title = 'Window Tint',
+        menu = 'visual_mods_menu',
+        options = options
+    })
+    lib.showContext('window_tint_menu')
+end
+
+local function openNeonLightsMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    local neonPositions = {
+        {id = 0, name = 'Left'},
+        {id = 1, name = 'Right'},
+        {id = 2, name = 'Front'},
+        {id = 3, name = 'Back'}
+    }
+    
+    local options = {}
+    
+    -- Toggle all neons
+    local allEnabled = true
+    for _, pos in ipairs(neonPositions) do
+        if not IsVehicleNeonLightEnabled(vehicle, pos.id) then
+            allEnabled = false
+            break
+        end
+    end
+    
+    table.insert(options, {
+        title = allEnabled and 'Disable All Neons' or 'Enable All Neons',
+        icon = 'lightbulb',
+        iconColor = allEnabled and '#ff0000' or '#00ff00',
+        onSelect = function()
+            for _, pos in ipairs(neonPositions) do
+                SetVehicleNeonLightEnabled(vehicle, pos.id, not allEnabled)
+            end
+            lib.notify({title = 'Neon Lights', description = allEnabled and 'All Disabled' or 'All Enabled', type = 'success'})
+            openNeonLightsMenu()
+        end
+    })
+    
+    -- Individual neon positions
+    for _, pos in ipairs(neonPositions) do
+        local isEnabled = IsVehicleNeonLightEnabled(vehicle, pos.id)
+        table.insert(options, {
+            title = pos.name .. ' Neon',
+            description = isEnabled and 'Currently ON' or 'Currently OFF',
+            icon = 'lightbulb',
+            iconColor = isEnabled and '#00ff00' or '#ff0000',
+            onSelect = function()
+                SetVehicleNeonLightEnabled(vehicle, pos.id, not isEnabled)
+                lib.notify({title = pos.name .. ' Neon', description = isEnabled and 'Disabled' or 'Enabled', type = 'success'})
+                openNeonLightsMenu()
+            end
+        })
+    end
+    
+    -- Neon color option
+    table.insert(options, {
+        title = 'Change Neon Color',
+        description = 'Set custom RGB color',
+        icon = 'palette',
+        iconColor = '#FF1493',
+        onSelect = function()
+            local r, g, b = GetVehicleNeonLightsColour(vehicle)
+            local input = lib.inputDialog('Neon Color (RGB)', {
+                {type = 'number', label = 'Red (0-255)', default = r, min = 0, max = 255, required = true},
+                {type = 'number', label = 'Green (0-255)', default = g, min = 0, max = 255, required = true},
+                {type = 'number', label = 'Blue (0-255)', default = b, min = 0, max = 255, required = true}
+            })
+            
+            if input then
+                SetVehicleNeonLightsColour(vehicle, input[1], input[2], input[3])
+                lib.notify({title = 'Neon Color Changed', type = 'success'})
+            end
+            openNeonLightsMenu()
+        end
+    })
+    
+    lib.registerContext({
+        id = 'neon_lights_menu',
+        title = 'Neon Lights',
+        menu = 'visual_mods_menu',
+        options = options
+    })
+    lib.showContext('neon_lights_menu')
+end
+
+local function openSpecificModMenu(modType, modName, parentMenu)
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    SetVehicleModKit(vehicle, 0)
+    local maxMod = GetNumVehicleMods(vehicle, modType)
+    local currentMod = GetVehicleMod(vehicle, modType)
+    
+    local options = {}
+    
+    -- Stock/Remove option
+    table.insert(options, {
+        title = 'Stock / Remove',
+        description = currentMod == -1 and 'Currently Active' or 'Click to apply',
+        icon = 'xmark',
+        iconColor = currentMod == -1 and '#00ff00' or '#ff0000',
+        onSelect = function()
+            RemoveVehicleMod(vehicle, modType)
+            lib.notify({title = modName, description = 'Removed', type = 'success'})
+            openSpecificModMenu(modType, modName, parentMenu)
+        end
+    })
+    
+    -- Mod options
+    for i = 0, maxMod - 1 do
+        local modLabel = GetModTextLabel(vehicle, modType, i)
+        local modDisplayName = modLabel ~= 'NULL' and GetLabelText(modLabel) or ('Upgrade ' .. (i + 1))
+        local isActive = currentMod == i
+        
+        table.insert(options, {
+            title = modDisplayName,
+            description = isActive and 'Currently Active' or 'Click to apply',
+            icon = 'check',
+            iconColor = isActive and '#00ff00' or '#1E90FF',
+            onSelect = function()
+                SetVehicleMod(vehicle, modType, i, false)
+                lib.notify({title = modName, description = modDisplayName, type = 'success'})
+                openSpecificModMenu(modType, modName, parentMenu)
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'specific_mod_menu',
+        title = modName,
+        menu = parentMenu,
+        options = options
+    })
+    lib.showContext('specific_mod_menu')
+end
+
 local function openVehicleCustomizationMenu()
     local ped = PlayerPedId()
     local vehicle = GetVehiclePedIsIn(ped, false)
@@ -1159,6 +4276,24 @@ local function openVehicleCustomizationMenu()
                 SetVehicleDirtLevel(vehicle, 0.0)
                 lib.notify({title = 'Vehicle Cleaned', type = 'success'})
                 openVehicleCustomizationMenu()
+            end
+        },
+        {
+            title = 'Performance Mods',
+            description = 'Engine, transmission, turbo, etc.',
+            icon = 'gauge-high',
+            iconColor = '#FF4500',
+            onSelect = function()
+                openPerformanceModsMenu()
+            end
+        },
+        {
+            title = 'Visual Mods',
+            description = 'Spoilers, bumpers, wheels, etc.',
+            icon = 'car',
+            iconColor = '#9370DB',
+            onSelect = function()
+                openVisualModsMenu()
             end
         },
         {
