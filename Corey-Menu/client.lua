@@ -14,26 +14,8 @@ end
 function OpenUnifiedMenu()
     lib.registerContext({
         id = 'unified_main_menu',
-        title = '🎮 Main Menu',
+        title = 'Corey Menu',
         options = {
-            {
-                title = 'Scene Menu',
-                description = 'Object spawning, speed zones, and advertisements',
-                icon = 'box',
-                iconColor = '#3498db',
-                onSelect = function()
-                    openSceneMenu()
-                end
-            },
-            {
-                title = 'Vehicle Menu',
-                description = 'Vehicle spawner and customization',
-                icon = 'car',
-                iconColor = '#e74c3c',
-                onSelect = function()
-                    ExecuteCommand('veh')
-                end
-            },
             {
                 title = 'Player Options',
                 description = 'Player health, armor, and abilities',
@@ -41,6 +23,15 @@ function OpenUnifiedMenu()
                 iconColor = '#2ecc71',
                 onSelect = function()
                     ExecuteCommand('playermenu')
+                end
+            },
+            {
+                title = 'Vehicle Options',
+                description = 'Vehicle spawner and customization',
+                icon = 'car',
+                iconColor = '#e74c3c',
+                onSelect = function()
+                    ExecuteCommand('veh')
                 end
             },
             {
@@ -53,12 +44,12 @@ function OpenUnifiedMenu()
                 end
             },
             {
-                title = 'Close Menu',
-                description = 'Exit the menu',
-                icon = 'xmark',
-                iconColor = '#95a5a6',
+                title = 'Scene Menu',
+                description = 'Object spawning, speed zones, and advertisements',
+                icon = 'box',
+                iconColor = '#3498db',
                 onSelect = function()
-                    lib.hideContext()
+                    openSceneMenu()
                 end
             }
         }
