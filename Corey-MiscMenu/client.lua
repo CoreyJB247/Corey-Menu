@@ -225,6 +225,58 @@ local function ToggleRadar()
     OpenMiscMenu()
 end
 
+-- Teleport to Waypoint
+local function TeleportToWaypoint()
+    local waypoint = GetFirstBlipInfoId(8) -- 8 is the blip type for waypoint
+    
+    if not DoesBlipExist(waypoint) then
+        lib.notify({
+            title = 'Teleport Failed',
+            description = 'No waypoint set on the map',
+            type = 'error'
+        })
+        OpenMiscMenu()
+        return
+    end
+    
+    local waypointCoords = GetBlipInfoIdCoord(waypoint)
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    local entity = vehicle > 0 and vehicle or ped
+    
+    -- Get ground Z coordinate
+    local groundFound = false
+    local groundZ = 0.0
+    
+    -- Start at a high Z position and work down
+    for i = 1000, 0, -50 do
+        RequestCollisionAtCoord(waypointCoords.x, waypointCoords.y, i)
+        Wait(0)
+        groundFound, groundZ = GetGroundZFor_3dCoord(waypointCoords.x, waypointCoords.y, i, false)
+        
+        if groundFound then
+            break
+        end
+    end
+    
+    -- If still not found, use waypoint Z or add some height
+    if not groundFound then
+        groundZ = waypointCoords.z + 1.0
+    end
+    
+    -- Teleport entity
+    SetEntityCoords(entity, waypointCoords.x, waypointCoords.y, groundZ + 1.0, false, false, false, true)
+    
+    lib.notify({
+        title = 'Teleported',
+        description = 'Teleported to waypoint',
+        type = 'success'
+    })
+    
+    -- Reopen the menu after teleporting
+    OpenMiscMenu()
+end
+
 -- Copy Coordinates Functions
 local function CopyVec3()
     local ped = PlayerPedId()
@@ -429,6 +481,14 @@ function OpenMiscMenu()
                 title = 'Copy Coordinates',
                 icon = 'location-dot',
                 menu = 'coords_menu'
+            },
+            {
+                title = 'Teleport to Waypoint',
+                description = 'Teleport to your map waypoint',
+                icon = 'location-crosshairs',
+                onSelect = function()
+                    TeleportToWaypoint()
+                end
             }
         }
     })
