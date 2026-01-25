@@ -108,6 +108,7 @@ local vehicles = {
             {model = "surge", name = "Surge"},
             {model = "tailgater", name = "Tailgater"},
             {model = "warrener", name = "Warrener"},
+            {model = "issi8", name = "Issi Rally"},
             {model = "washington", name = "Washington"}
         }
     },
@@ -118,23 +119,29 @@ local vehicles = {
         models = {
             {model = "baller", name = "Baller"},
             {model = "baller2", name = "Baller LE"},
+            {model = "baller8", name = "Baller ST-D"},
             {model = "cavalcade", name = "Cavalcade"},
             {model = "cavalcade2", name = "Cavalcade II"},
             {model = "dubsta", name = "Dubsta"},
             {model = "dubsta2", name = "Dubsta 2"},
             {model = "fq2", name = "FQ 2"},
             {model = "granger", name = "Granger"},
+            {model = "granger2", name = "Granger 3600LX"},
             {model = "gresley", name = "Gresley"},
             {model = "habanero", name = "Habanero"},
             {model = "huntley", name = "Huntley S"},
             {model = "landstalker", name = "Landstalker"},
+            {model = "landstalker2", name = "Landstalker XL"},
             {model = "mesa", name = "Mesa"},
             {model = "patriot", name = "Patriot"},
             {model = "radi", name = "Radius"},
             {model = "rocoto", name = "Rocoto"},
             {model = "seminole", name = "Seminole"},
             {model = "serrano", name = "Serrano"},
-            {model = "xls", name = "XLS"}
+            {model = "xls", name = "XLS"},
+            {model = "iwagen", name = "I-Wagen"},
+            {model = "jubilee", name = "Jubilee"},
+            {model = "dorado", name = "Dorado"},
         }
     },
     {
@@ -223,13 +230,14 @@ local vehicles = {
             {model = "sandking2", name = "Sandking SWB"},
             {model = "technical", name = "Technical"},
             {model = "trophytruck", name = "Trophy Truck"},
+            {model = "guardian", name = "Vapid Guardian"},
             {model = "trophytruck2", name = "Desert Raid"}
         }
     },
     {
         category = "Vans", 
         icon = "van-shuttle", 
-        iconColor = "#696969", 
+        iconColor = "#ccc8c8ff", 
         models = {
             {model = "bison", name = "Bison"},
             {model = "bobcatxl", name = "Bobcat XL"},
@@ -254,6 +262,88 @@ local vehicles = {
             {model = "taco", name = "Taco Van"},
             {model = "youga", name = "Youga"},
             {model = "youga2", name = "Youga Classic"}
+        }
+    },
+    {
+        category = "Commercial", 
+        icon = "truck", 
+        iconColor = "#eb4646ff", 
+        models = {
+            {model = "benson", name = "Benson"},
+            {model = "benson2", name = "Benson (Cluckin' Bell)"},
+            {model = "biff", name = "Biff"},
+            {model = "cerberus", name = "Apocalypse Cerberus"},
+            {model = "cerberus2", name = "Future Shock Cerberus"},
+            {model = "cerberus3", name = "Nightmare Cerberus"},
+            {model = "hauler", name = "Hauler"},
+            {model = "hauler2", name = "Hauler Custom"},
+            {model = "mule", name = "Mule"},
+            {model = "mule4", name = "Mule Custom"},
+            {model = "packer", name = "Packer"},
+            {model = "phantom", name = "Phantom"},
+            {model = "phantom2", name = "Phantom Wedge"},
+            {model = "phantom3", name = "Phantom Custom"},
+            {model = "phantom4", name = "Phantom XMAS"},
+            {model = "pounder", name = "Pounder"},
+            {model = "pounder2", name = "Pounder Custom"},
+            {model = "stockade", name = "Stockade"},
+            {model = "terbyte", name = "Terrorbyte"},
+            {model = "docktug", name = "Docktug"},
+            {model = "tractor2", name = "Fieldmaster Tractor"},
+            {model = "utillitruck", name = "Utility Truck (Lift)"},
+            {model = "utillitruck2", name = "Utility Truck"},
+            {model = "utillitruck3", name = "Utility Car"},
+            {model = "handler", name = "Dock Handler"},
+            {model = "mixer", name = "Cement Mixer"},
+            {model = "rubble", name = "Rubble Truck"},
+            {model = "tiptruck", name = "Tipper"},
+            {model = "tiptruck2", name = "Tipper 2"},
+            {model = "trash", name = "Garbage Truck"},
+
+        }
+    },
+    {
+        category = "Service", 
+        icon = "cog", 
+        iconColor = "#f4f812ff", 
+        models = {
+            {model = "airbus", name = "Airport Bus"},
+            {model = "bus", name = "Bus"},
+            {model = "coach", name = "Coach"},
+            {model = "pbus", name = "Party Bus"},
+            {model = "rallytruck", name = "Rally Truck"},
+            {model = "rentalbus", name = "Rental Shuttle Bus"},
+            {model = "taxi", name = "Vapid Stanier Taxi"},
+            {model = "tourbus", name = "Tour Bus"},
+        }
+    },
+    {
+        category = "Trailer", 
+        icon = "trailer", 
+        iconColor = "#ffffffff", 
+        models = {
+            {model = "armytrailer", name = "Army Trailer"},
+            {model = "freighttrailer", name = "Freight Trailer"},
+            {model = "armytanker", name = "Army Tanker"},
+            {model = "trailerlarger", name = "MOC"},
+            {model = "docktrailer", name = "Container Trailer"},
+            {model = "tr3", name = "Large Boat Trailer"},
+            {model = "tr2", name = "Car Trailer"},
+            {model = "tr3", name = "Army Trailer"},
+            {model = "trflat", name = "Flatbed Trailer"},
+            {model = "trailers", name = "Countainer Trailer 2"},
+            {model = "trailers4", name = "Countainer Trailer 3"},
+            {model = "trailers2", name = "Trailer 2"},
+            {model = "trailers3", name = "Trailer 3"},
+            {model = "trailers5", name = "XMAS Trailer"},
+            {model = "tvtrailer", name = "TV Trailer"},
+            {model = "tvtrailer2", name = "TV Trailer 2"},
+            {model = "trailerlogs", name = "Log Trailer"},
+            {model = "tanker", name = "Fuel Tanker"},
+            {model = "baletrailer", name = "Bale Trailer"},
+            {model = "graintrailer", name = "Grain Trailer"},
+            {model = "raketrailer", name = "Tractor Rake Trailer"},
+            {model = "trailersmall", name = "Small Trailer"},
         }
     },
     {
@@ -306,7 +396,131 @@ local vehicles = {
             {model = "zombiea", name = "Zombie Bobber"},
             {model = "zombieb", name = "Zombie Chopper"}
         }
-    }
+    },
+    {
+        category = "Open Wheel", 
+        icon = "flag-checkered", 
+        iconColor = "#51e623ff", 
+        models = {
+            {model = "formula", name = "PR4"},
+            {model = "formula2", name = "R88"},
+            {model = "openwheel1", name = "BR8"},
+            {model = "openwheel2", name = "DR1"},
+        }
+    },
+    {
+        category = "Bicycle's", 
+        icon = "bicycle", 
+        iconColor = "#ffffffff", 
+        models = {
+            {model = "bmx", name = "BMX"},
+            {model = "cruiser", name = "Cruiser"},
+            {model = "fixter", name = "Fixter"},
+            {model = "inductor", name = "Inductor"},
+            {model = "inductor2", name = "Junk Energy Inductor"},
+            {model = "scorcher", name = "Scorcher"},
+            {model = "tribike", name = "Whippet Race Bike"},
+            {model = "tribike2", name = "Endurex Race Bike"},
+            {model = "tribike3", name = "Tri-Cycles Race Bike"},
+        }
+    },
+    {
+        category = "Helicopters", 
+        icon = "helicopter", 
+        iconColor = "#0066ffff", 
+        models = {
+            {model = "akula", name = "Akula"},
+            {model = "annihilator", name = "Annihilator"},
+            {model = "annihilator2", name = "Annihilator Stealth"},
+            {model = "buzzard", name = "Buzzard Attack Chopper"},
+            {model = "buzzard2", name = "Buzzard"},
+            {model = "cargobob", name = "Cargobob"},
+            {model = "cargobob2", name = "Cargobob Jetsam"},
+            {model = "cargobob3", name = "Cargobob TPE"},
+            {model = "conada", name = "Conada"},
+            {model = "condada2", name = "Weaponized Conada"},
+            {model = "frogger", name = "Frogger"},
+            {model = "havok", name = "Havok"},
+            {model = "hunter", name = "FH-1 Hunter"},
+            {model = "maverick", name = "Maverick"},
+            {model = "polmav", name = "Police/EMS Maverick"},
+            {model = "seasparrow", name = "Sea Sparrow"},
+            {model = "seasparrow2", name = "Sparrow"},
+            {model = "skylift", name = "Skylift"},
+            {model = "supervolito", name = "SuperVolito"},
+            {model = "supervolito2", name = "SuperVolito Carbon"},
+            {model = "swift", name = "Swift"},
+            {model = "swift2", name = "Swift Deluxe"},
+            {model = "valkyrie", name = "Valkyrie"},
+            {model = "volatus", name = "Volatus"},
+        }
+    },
+    {
+        category = "Planes", 
+        icon = "plane", 
+        iconColor = "#0066ffff", 
+        models = {
+            {model = "alkonost", name = "RO-86 Alkonost"},
+            {model = "alphaz1", name = "Alpha-Z1"},
+            {model = "avenger", name = "Avenger"},
+            {model = "besra", name = "Besra"},
+            {model = "blimp", name = "Atomic Blimp"},
+            {model = "blimp2", name = "Xero Blimp"},
+            {model = "blimp3", name = "Custom Blimp"},
+            {model = "bombushka", name = "RM-10 Bombushka"},
+            {model = "cargoplane", name = "Cargo Plane"},
+            {model = "cuban800", name = "Cuban 800"},
+            {model = "dodo", name = "Dodo"},
+            {model = "duster", name = "Crop Duster"},
+            {model = "howard", name = "Howard NX-25"},
+            {model = "hydra", name = "Hydra"},
+            {model = "jet", name = "Commercial Jet"},
+            {model = "lazer", name = "P-996 Lazer"},
+            {model = "luxor", name = "Luxor"},
+            {model = "luxor2", name = "Luxor Deluxe"},
+            {model = "mammatus", name = "Mammatus"},
+            {model = "microlight", name = "Ultralight"},
+            {model = "miljet", name = "Military Jet"},
+            {model = "mogul", name = "Mogul"},
+            {model = "molotok", name = "V-65 Molotok"},
+            {model = "nimbus", name = "Nimbus"},
+            {model = "nokota", name = "P-45 Nokota"},
+            {model = "pyro", name = "Pyro"},
+            {model = "raiju", name = "F-160 Raiju"},
+            {model = "rogue", name = "Rogue"},
+            {model = "seabreeze", name = "Seabreeze"},
+            {model = "shamal", name = "Shamal"},
+            {model = "starling", name = "LF-22 Starling"},
+            {model = "streamer216", name = "Streamer 216"},
+            {model = "strikeforce", name = "B-11 Strikeforce"},
+            {model = "stunt", name = "Mallard"},
+            {model = "titan", name = "Titan"},
+            {model = "tula", name = "Tula"},
+            {model = "velum", name = "Velum"},
+            {model = "velum2", name = "Velum (5-Seater)"},
+            {model = "vestra", name = "Vestra"},
+            {model = "volatol", name = "Volatol"},
+        }
+    },
+    {
+        category = "Other", 
+        icon = "circle", 
+        iconColor = "#ffffffff", 
+        models = {
+            {model = "airtug", name = "Airtug"},
+            {model = "caddy", name = "Golf Cart"},
+            {model = "caddy2", name = "Golf Cart Old"},
+            {model = "caddy3", name = "Caddy Long"},
+            {model = "forklift", name = "Forklift"},
+            {model = "mower", name = "Lawn Mower"},
+            {model = "ripley", name = "Ripley"},
+            {model = "tractor", name = "Tractor"},
+            {model = "bulldozer", name = "Bulldozer"},
+            {model = "cutter", name = "Cutter"},
+            {model = "dump", name = "Dump Truck"},
+            {model = "wastelander", name = "Wastelander"},
+        }
+    },
 }
 
 -- Emergency vehicles with subcategories
@@ -328,6 +542,7 @@ local emergencyVehicles = {
     subcategory = "Los Santos Police Department",
     icon = "shield-halved",
     vehicles = {
+        {model = "segway", name = "LSPD Segway"},
         {model = "rav4hyb", name = "LSPD Detective 2024 Toyota Rav4"},
         {model = "25umfpiu", name = "LSPD Detective 2025 Ford Explorer"},
         {model = "umdet1", name = "LSPD Detective 2022 Dodge Durango"},
@@ -365,7 +580,7 @@ local addonVehicles = {
         icon = "car",
         vehicles = {
             {model = "piccolo", name = "Grotti Piccolo"},
-            {model = "customcar2", name = "Custom Car 2"},
+            {model = "twingo", name = "Renault Twingo"},
             -- Add your addon vehicles here
         }
     },
@@ -374,8 +589,10 @@ local addonVehicles = {
         icon = "car",
         vehicles = {
             {model = "golf8gti", name = "VW Golf 8 GTI"},
+            {model = "golfgti7", name = "VW Golf 7 GTI"},
             {model = "tltypes", name = "Honda Acura TLS"},
             {model = "teslapd", name = "Tesla Model S"},
+            {model = "tmodel", name = "Tesla Model 3"},
             {model = "c6320", name = "Mercedes AMG C63S"},
             {model = "77monaco", name = "1977 Dodge Monaco "},
             {model = "22char", name = "2022 Dodge Charger"},
@@ -392,7 +609,11 @@ local addonVehicles = {
             {model = "m3e36", name = "BMW M3 E36"},
             {model = "22rs5", name = "2022 Audi rs5"},
             {model = "22m5sal", name = "2022 BMW M5"},
+            {model = "m422", name = "2022 BMW M4"},
             {model = "21avant", name = "2021 Audi RS5 Avant"},
+            {model = "nbmazda3", name = "2020 Mazda 3"},
+            {model = "saab93aeroc", name = "Saab 93"},
+            {model = "rbmwm3f80", name = "BMW M3 F80"},
             -- Add your addon vehicles here
         }
     },
@@ -400,9 +621,29 @@ local addonVehicles = {
         subcategory = "Sports",
         icon = "flag-checkered",
         vehicles = {
-            {model = "22m5s", name = "2022 BMW M5 CS"},
+            {model = "22m5", name = "2022 BMW M5 CS"},
             {model = "22bengt", name = "2022 Bentley GT Continental"},
             {model = "mustang68", name = "1968 Ford Mustang"},
+            {model = "nbbatur", name = "Bentley Batur"},
+            {model = "ypg205t16a", name = "Peugeot 205 (Rally)"},
+            {model = "ypg205t16b", name = "Peugeot 205"},
+            {model = "majfd", name = "Mazda RX-7"},
+            {model = "99viper", name = "1999 Dodge Viper"},
+            {model = "cam8tun", name = "Toyota Camry XSE"},
+            {model = "z32", name = "Fairlady Z 300ZX"},
+            {model = "ap2", name = "Honda S2000"},
+            {model = "focusrs", name = "2017 Ford Focus RS"},
+            {model = "s63w222", name = "Mercedes AMG S63"},
+            {model = "rufrgt8", name = "Porshe GT8"},
+            {model = "24mustdh", name = "2024 Ford Mustang GT"},
+            {model = "cali57", name = "Ferrari 250 GT"},
+            {model = "20gt500", name = "2020 Ford Mustang GT"},
+            {model = "59coronet", name = "1959 Dodge Coronet"},
+            {model = "chrysler11", name = "Chrysler"},
+            {model = "21ltz", name = "2021 Chevy Camero ZL1"},
+            {model = "20gt500", name = "2020 Ford Mustang GT"},
+            {model = "gtr50", name = "Nissan GT-R50"},
+            {model = "r820", name = "Audi R8"},
             -- Add your addon vehicles here
         }
     },
@@ -410,8 +651,16 @@ local addonVehicles = {
         subcategory = "Super",
         icon = "gauge-high",
         vehicles = {
-            {model = "modcar1", name = "Modified Car 1"},
-            {model = "modcar2", name = "Modified Car 2"},
+            {model = "mig", name = "Ferrari"},
+            {model = "jeskoattack24", name = "Koenigsegg Jesko"},
+            {model = "f812", name = "Ferrari F812"},
+            {model = "italigtb2", name = "Ferrari Itali GTB"},
+            {model = "f4090", name = "Ferrari F4090"},
+            {model = "czr1", name = "Chevy Corvette ZR"},
+            {model = "c7", name = "Chevy Corvette C7"},
+            {model = "evija", name = "2020 Lotus Evija"},
+            {model = "20gt500", name = "2020 Ford Mustang GT"},
+            {model = "bolide", name = "2020 Bugatti Bolide"},
             -- Add your addon vehicles here
         }
     },
@@ -420,7 +669,30 @@ local addonVehicles = {
         icon = "truck",
         vehicles = {
             {model = "teslax", name = "Tesla Model X"},
-            {model = "modcar2", name = "Modified Car 2"},
+            {model = "mache", name = "Ford MachE"},
+            {model = "4runner", name = "Toyota 4 Runner"},
+            {model = "g63sec20", name = "Mercedes AMG G63"},
+            {model = "urus", name = "Lamborghini Urus"},
+            {model = "bbentayga", name = "Bentley Bentayga"},
+            {model = "vxr", name = "Toyota VXR V8"},
+            {model = "16i3", name = "2016 BMW I3"},
+            {model = "tundra2021", name = "2021 Toyota Tundra"},
+            {model = "expmax20", name = "2020 Ford Expedition Platinum"},
+            {model = "22exp", name = "2022 Ford Expedition"},
+            {model = "21dura", name = "2021 Dodge Durango Citreol"},
+            {model = "19exp", name = "2019 Ford Explorer"},
+            {model = "15expxl", name = "2015 Ford Expedition"},
+            {model = "15exp", name = "2015 Ford Expedition Platinum"},
+            {model = "02tahoe", name = "2002 Chevy Tahoe"},
+            {model = "ncavalcade", name = "Cavalcade"},
+            {model = "20tahoeciv", name = "2018 Chevy Tahoe (Retired)"},
+            {model = "16fpiuciv", name = "2016 Ford FPIU (Retired)"},
+            {model = "sec_rav424", name = "2021 Toyota Rav4 Hybrid"},
+            {model = "tahoe08", name = "2008 Chevy Tahoe"},
+            {model = "21subur", name = "2021 Chevy Suburban"},
+            {model = "15carv", name = "2015 Dodge Grand Caravan"},
+            {model = "sec_rav424", name = "2021 Toyota Rav4 Hybrid"},
+            {model = "sec_rav424", name = "2021 Toyota Rav4 Hybrid"},
             -- Add your addon vehicles here
         }
     },
@@ -428,8 +700,36 @@ local addonVehicles = {
         subcategory = "Off-Road",
         icon = "mountain",
         vehicles = {
-            {model = "modcar1", name = "Modified Car 1"},
-            {model = "modcar2", name = "Modified Car 2"},
+            {model = "peacemaker", name = "Gallavanter Peacemaker"},
+            {model = "peacemaker4", name = "Gallavanter Peacemaker (Bed)"},
+            {model = "peacemaker6", name = "Gallavanter Peacemaker (Net)"},
+            {model = "f150", name = "2015 Ford F-150 SVT"},
+            {model = "f150army", name = "2015 Ford F-150 (Army)"},
+            {model = "rubicon24", name = "2024 Jeep Rubicon"},
+            {model = "nsandstorm3", name = "Vapid Sandstorm (Single Cab)"},
+            {model = "nsandstorm2", name = "Vapid Sandstorm (Dually)"},
+            {model = "nsandstorm", name = "Vapid Sandstorm (Crew Cab)"},
+            {model = "hellenstorm", name = "Vapid Hellenstorm"},
+            {model = "CyberTruckV", name = "Tesla Cybertruck"},
+            {model = "wildtrak", name = "Ford Bronco Wildtrack"},
+            {model = "velociraptor", name = "Ford F-150 Velociraptor"},
+            {model = "f35019", name = "2019 Ford F-350"},
+            {model = "22mavxl", name = "2022 Ford Maverick"},
+            {model = "22f450xl", name = "2022 Ford F450 XL Superduty"},
+            {model = "22f450xl", name = "2022 Ford F450 Limited Superduty"},
+            {model = "21f250", name = "2021 Ford F-250 Superduty"},
+            {model = "21f150", name = "2021 Ford F-150"},
+            {model = "21brooff", name = "2021 Ford Bronco Sport"},
+            {model = "21bro", name = "2021 Ford Bronco"},
+            {model = "18raptor", name = "2018 Ford F-150 Raptor"},
+            {model = "22silvwt", name = "2021 Chevy Silverado"},
+            {model = "22silvltz", name = "2021 Chevy Silverado LTZ"},
+            {model = "21f150", name = "2021 Ford F-150"},
+            {model = "cararv", name = "Vapid Caracara 4x4 RV"},
+            {model = "sandkingRV", name = "Vapid Sandking RV"},
+            {model = "guardianrv", name = "Vapid Guardian RV"},
+            {model = "sandroamer", name = "Vapid Sandroamer RV"},
+            {model = "f15078", name = "1978 Ford F-150"},
             -- Add your addon vehicles here
         }
     },
@@ -437,8 +737,13 @@ local addonVehicles = {
         subcategory = "Vans",
         icon = "van-shuttle",
         vehicles = {
-            {model = "modcar1", name = "Modified Car 1"},
-            {model = "modcar2", name = "Modified Car 2"},
+            {model = "22chevango", name = "2012 Chevy Express (Cargo)"},
+            {model = "22chevan", name = "2012 Chevy Express (Passenger)"},
+            {model = "jogger", name = "Benefactor Jogger"},
+            {model = "joggerpas", name = "Benefactor Jogger (Passenger)"},
+            {model = "imperialev", name = "Benefactor Imperial EV"},
+            {model = "imperialpas", name = "Benefactor Imperial (Passenger)"},
+            {model = "imperial", name = "Benefactor Imperial"},
             -- Add your addon vehicles here
         }
     },
@@ -446,8 +751,15 @@ local addonVehicles = {
         subcategory = "Motorcycles",
         icon = "motorcycle",
         vehicles = {
-            {model = "modcar1", name = "Modified Car 1"},
-            {model = "modcar2", name = "Modified Car 2"},
+            {model = "21z900", name = "Kawasaki Z900"},
+            {model = "g_xlcr", name = "Harley Davidson Sportser"},
+            {model = "r1200gsec", name = "BMW R1200"},
+            {model = "pcx160_2025", name = "PCX 160"},
+            {model = "ip_m1000rr_23", name = "BMW M1000RR"},
+            {model = "s1000sec", name = "BMW S1000R"},
+            {model = "goldwing", name = "Honda Goldwing"},
+            {model = "sahara300", name = "Sahara 300"},
+            {model = "117", name = "Harley Davidson Bike"},
             -- Add your addon vehicles here
         }
     },
@@ -455,8 +767,18 @@ local addonVehicles = {
         subcategory = "Utility",
         icon = "circle",
         vehicles = {
-            {model = "modcar1", name = "Modified Car 1"},
-            {model = "modcar2", name = "Modified Car 2"},
+            {model = "segwayciv", name = "Segway"},
+            {model = "iak_wheelchair", name = "Wheelchair"},
+            {model = "galaxyroamer", name = "Galaxy Roamer Bus RV"},
+            -- Add your addon vehicles here
+        }
+    },
+    {
+        subcategory = "Boats",
+        icon = "circle",
+        vehicles = {
+            {model = "amels200", name = "AMELS200"},
+            {model = "650e", name = "Sea Ray 650E"},
             -- Add your addon vehicles here
         }
     },
@@ -531,6 +853,40 @@ local function SpawnVehicle(model, savedData, keepMenuOpen, menuCallback)
         menuCallback()
     end
 end
+
+-- Settings variables
+local noHelmet = false
+local engineAlwaysOn = false
+
+-- Thread to manage no helmet
+CreateThread(function()
+    while true do
+        Wait(0)
+        if noHelmet then
+            local ped = PlayerPedId()
+            if IsPedInAnyVehicle(ped, false) then
+                SetPedConfigFlag(ped, 35, false)
+            end
+        end
+    end
+end)
+
+-- Thread to manage always clean vehicle
+CreateThread(function()
+    while true do
+        Wait(1000)
+        if alwaysClean then
+            local ped = PlayerPedId()
+            local vehicle = GetVehiclePedIsIn(ped, false)
+            if vehicle ~= 0 then
+                local dirtLevel = GetVehicleDirtLevel(vehicle)
+                if dirtLevel > 0 then
+                    SetVehicleDirtLevel(vehicle, 0.0)
+                end
+            end
+        end
+    end
+end)
 
 local function SaveCurrentVehicle()
     local ped = PlayerPedId()
@@ -4331,6 +4687,17 @@ local function openVehicleCustomizationMenu()
             onSelect = function()
                 openLicensePlateMenu()
             end
+        },
+        {
+            title = noHelmet and 'No Helmet: ON' or 'No Helmet: OFF',
+            description = 'Toggle automatic helmet removal',
+            icon = noHelmet and 'toggle-on' or 'toggle-off',
+            iconColor = noHelmet and '#00ff00' or '#ff0000',
+            onSelect = function()
+                noHelmet = not noHelmet
+                lib.notify({title = 'No Helmet', description = noHelmet and 'Enabled' or 'Disabled', type = 'info'})
+                openVehicleCustomizationMenu()
+            end
         }
     }
     
@@ -4566,6 +4933,137 @@ local function openLicensePlateMenu()
     lib.showContext('license_plate_menu')
 end
 
+
+
+local function openDoorsMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    local doors = {
+        {id = 0, name = 'Front Left Door'},
+        {id = 1, name = 'Front Right Door'},
+        {id = 2, name = 'Rear Left Door'},
+        {id = 3, name = 'Rear Right Door'},
+        {id = 4, name = 'Hood'},
+        {id = 5, name = 'Trunk'}
+    }
+    
+    local options = {}
+    
+    -- Door controls
+    for _, door in ipairs(doors) do
+        local isOpen = GetVehicleDoorAngleRatio(vehicle, door.id) > 0
+        table.insert(options, {
+            title = door.name,
+            description = isOpen and 'Currently OPEN' or 'Currently CLOSED',
+            icon = 'door-open',
+            iconColor = isOpen and '#00ff00' or '#ff0000',
+            onSelect = function()
+                local currentVeh = GetVehiclePedIsIn(PlayerPedId(), false)
+                local currentState = GetVehicleDoorAngleRatio(currentVeh, door.id) > 0
+                
+                if currentState then
+                    SetVehicleDoorShut(currentVeh, door.id, false)
+                    lib.notify({title = door.name, description = 'Closed', type = 'success'})
+                else
+                    SetVehicleDoorOpen(currentVeh, door.id, false, false)
+                    lib.notify({title = door.name, description = 'Opened', type = 'success'})
+                end
+                
+                -- Small delay to let door position update
+                Wait(100)
+                openDoorsMenu()
+            end
+        })
+    end
+    
+    -- Close all doors option
+    table.insert(options, {
+        title = 'Close All Doors',
+        icon = 'door-closed',
+        iconColor = '#FFA500',
+        onSelect = function()
+            for i = 0, 5 do
+                SetVehicleDoorShut(vehicle, i, false)
+            end
+            lib.notify({title = 'Corey Vehicle Actions', description = 'All doors closed', type = 'success'})
+            openDoorsMenu()
+        end
+    })
+    
+    lib.registerContext({
+        id = 'doors_menu',
+        title = 'Vehicle Doors',
+        menu = 'vehicle_main_menu',
+        options = options
+    })
+    lib.showContext('doors_menu')
+end
+
+local function openWindowsMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    local windows = {
+        {id = 0, name = 'Front Left Window'},
+        {id = 1, name = 'Front Right Window'},
+        {id = 2, name = 'Rear Left Window'},
+        {id = 3, name = 'Rear Right Window'}
+    }
+    
+    local options = {}
+    
+    -- Window controls
+    for _, window in ipairs(windows) do
+        table.insert(options, {
+            title = window.name,
+            description = 'Control window',
+            icon = 'window-maximize',
+            iconColor = '#4169E1',
+            onSelect = function()
+                if IsVehicleWindowIntact(vehicle, window.id) then
+                    RollDownWindow(vehicle, window.id)
+                    lib.notify({title = window.name, description = 'Rolled down', type = 'success'})
+                else
+                    RollUpWindow(vehicle, window.id)
+                    lib.notify({title = window.name, description = 'Rolled up', type = 'success'})
+                end
+                openWindowsMenu()
+            end
+        })
+    end
+    
+    -- Roll down all windows
+    table.insert(options, {
+        title = 'Roll Down All Windows',
+        icon = 'arrows-down-to-line',
+        iconColor = '#00BFFF',
+        onSelect = function()
+            RollDownWindows(vehicle)
+            lib.notify({title = 'Corey Vehicle Actions', description = 'All windows rolled down', type = 'success'})
+            openWindowsMenu()
+        end
+    })
+    
+    lib.registerContext({
+        id = 'windows_menu',
+        title = 'Vehicle Windows',
+        menu = 'vehicle_main_menu',
+        options = options
+    })
+    lib.showContext('windows_menu')
+end
+
 local function openVehicleMenu()
     local options = {
         {
@@ -4602,6 +5100,24 @@ local function openVehicleMenu()
             iconColor = '#FFD700',
             onSelect = function()
                 openSavedVehiclesMenu()
+            end
+        },
+        {
+            title = 'Vehicle Doors',
+            description = 'Control vehicle doors',
+            icon = 'door-open',
+            iconColor = '#9370DB',
+            onSelect = function()
+                openDoorsMenu()
+            end
+        },
+        {
+            title = 'Vehicle Windows',
+            description = 'Control vehicle windows',
+            icon = 'window-maximize',
+            iconColor = '#4169E1',
+            onSelect = function()
+                openWindowsMenu()
             end
         }
     }

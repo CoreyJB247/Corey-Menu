@@ -3,6 +3,7 @@ local noclipEnabled = false
 local noclipSpeedIndex = 3 -- Default to Normal speed
 local hudHidden = false
 local radarHidden = false
+local isRecording = false
 
 -- Noclip Variables
 local heading = 0.0
@@ -225,6 +226,61 @@ local function ToggleRadar()
     OpenMiscMenu()
 end
 
+-- Rockstar Editor Recording Functions
+local function StartEditorRecording()
+    if isRecording then
+        lib.notify({
+            title = 'Recording',
+            description = 'Already recording',
+            type = 'error'
+        })
+        OpenMiscMenu()
+        return
+    end
+    
+    StartRecording(1) -- Native function - Start recording with mode 1
+    isRecording = true
+    
+    lib.notify({
+        title = 'Rockstar Editor',
+        description = 'Recording started',
+        type = 'success'
+    })
+    
+    OpenMiscMenu()
+end
+
+local function StopEditorRecording()
+    if not isRecording then
+        lib.notify({
+            title = 'Recording',
+            description = 'Not currently recording',
+            type = 'error'
+        })
+        OpenMiscMenu()
+        return
+    end
+    
+    StopRecordingAndSaveClip() -- Native function - Stop and save the recording
+    isRecording = false
+    
+    lib.notify({
+        title = 'Rockstar Editor',
+        description = 'Recording stopped and saved',
+        type = 'success'
+    })
+    
+    OpenMiscMenu()
+end
+
+local function ToggleRecording()
+    if isRecording then
+        StopEditorRecording()
+    else
+        StartEditorRecording()
+    end
+end
+
 -- Teleport to Waypoint
 local function TeleportToWaypoint()
     local waypoint = GetFirstBlipInfoId(8) -- 8 is the blip type for waypoint
@@ -427,6 +483,47 @@ end
 
 -- Main Misc Menu
 function OpenMiscMenu()
+    -- Register coords menu first before the main menu references it
+    lib.registerContext({
+        id = 'coords_menu',
+        title = 'Copy Coordinates',
+        menu = 'misc_menu',
+        options = {
+            {
+                title = 'Copy vec3',
+                description = 'Copy as vector3(x, y, z)',
+                icon = 'copy',
+                onSelect = function()
+                    CopyVec3()
+                end
+            },
+            {
+                title = 'Copy vec4',
+                description = 'Copy as vector4(x, y, z, heading)',
+                icon = 'copy',
+                onSelect = function()
+                    CopyVec4()
+                end
+            },
+            {
+                title = 'Copy x, y, z',
+                description = 'Copy as x, y, z',
+                icon = 'copy',
+                onSelect = function()
+                    CopyCoords()
+                end
+            },
+            {
+                title = 'Copy Heading',
+                description = 'Copy heading only',
+                icon = 'compass',
+                onSelect = function()
+                    CopyHeading()
+                end
+            }
+        }
+    })
+
     lib.registerContext({
         id = 'misc_menu',
         title = 'Misc Options',
@@ -475,6 +572,33 @@ function OpenMiscMenu()
                 iconColor = radarHidden and '#ff0000' or '#00ff00',
                 onSelect = function()
                     ToggleRadar()
+                end
+            },
+            {
+                title = 'Toggle RHUD',
+                description = 'Toggle the hud system',
+                icon = 'eye',
+                onSelect = function()
+                    ExecuteCommand('rhud')
+                    OpenMiscMenu()
+                end
+            },
+            {
+                title = 'Configure RHUD',
+                description = 'Configure the hud system',
+                icon = 'gear',
+                onSelect = function()
+                    ExecuteCommand('rhud config')
+                    OpenMiscMenu()
+                end
+            },
+            {
+                title = 'Rockstar Editor',
+                description = isRecording and 'Stop Recording' or 'Start Recording',
+                icon = 'video',
+                iconColor = isRecording and '#ff0000' or '#ffffff',
+                onSelect = function()
+                    ToggleRecording()
                 end
             },
             {
