@@ -4602,6 +4602,97 @@ local function openSpecificModMenu(modType, modName, parentMenu)
     lib.showContext('specific_mod_menu')
 end
 
+
+local function openHornMenu()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    
+    if vehicle == 0 then
+        lib.notify({title = 'Error', description = 'You must be in a vehicle', type = 'error'})
+        return
+    end
+    
+    SetVehicleModKit(vehicle, 0)
+    local currentHorn = GetVehicleMod(vehicle, 14) -- 14 is horn mod type
+    
+    local horns = {
+        {name = 'Stock Horn', id = -1},
+        {name = 'Truck Horn', id = 0},
+        {name = 'Police Horn', id = 1},
+        {name = 'Clown Horn', id = 2},
+        {name = 'Musical Horn 1', id = 3},
+        {name = 'Musical Horn 2', id = 4},
+        {name = 'Musical Horn 3', id = 5},
+        {name = 'Musical Horn 4', id = 6},
+        {name = 'Musical Horn 5', id = 7},
+        {name = 'Sad Trombone', id = 8},
+        {name = 'Classical Horn 1', id = 9},
+        {name = 'Classical Horn 2', id = 10},
+        {name = 'Classical Horn 3', id = 11},
+        {name = 'Classical Horn 4', id = 12},
+        {name = 'Classical Horn 5', id = 13},
+        {name = 'Classical Horn 6', id = 14},
+        {name = 'Classical Horn 7', id = 15},
+        {name = 'Scale - Do', id = 16},
+        {name = 'Scale - Re', id = 17},
+        {name = 'Scale - Mi', id = 18},
+        {name = 'Scale - Fa', id = 19},
+        {name = 'Scale - Sol', id = 20},
+        {name = 'Scale - La', id = 21},
+        {name = 'Scale - Ti', id = 22},
+        {name = 'Scale - Do (High)', id = 23},
+        {name = 'Jazz Horn 1', id = 24},
+        {name = 'Jazz Horn 2', id = 25},
+        {name = 'Jazz Horn 3', id = 26},
+        {name = 'Jazz Horn Loop', id = 27},
+        {name = 'Star Spangled Banner 1', id = 28},
+        {name = 'Star Spangled Banner 2', id = 29},
+        {name = 'Star Spangled Banner 3', id = 30},
+        {name = 'Star Spangled Banner 4', id = 31},
+        {name = 'Classical Horn 8 (Loop)', id = 32},
+        {name = 'Classical Horn 9 (Loop)', id = 33},
+        {name = 'Classical Horn 10 (Loop)', id = 34},
+        {name = 'Funeral March (Loop)', id = 35},
+        {name = 'Epiphany (Loop)', id = 36},
+        {name = 'Chinatown (Loop)', id = 37},
+        {name = 'San Andreas (Loop)', id = 38},
+        {name = 'Liberty City (Loop)', id = 39},
+        {name = 'Festive 1 (Loop)', id = 40},
+        {name = 'Festive 2 (Loop)', id = 41},
+        {name = 'Festive 3 (Loop)', id = 42}
+    }
+    
+    local options = {}
+    
+    for _, horn in ipairs(horns) do
+        local isActive = currentHorn == horn.id
+        table.insert(options, {
+            title = horn.name,
+            description = isActive and 'Currently Active' or 'Click to apply',
+            icon = 'bullhorn',
+            iconColor = isActive and '#00ff00' or '#FFA500',
+            onSelect = function()
+                if horn.id == -1 then
+                    RemoveVehicleMod(vehicle, 14)
+                    lib.notify({title = 'Horn Changed', description = horn.name, type = 'success'})
+                else
+                    SetVehicleMod(vehicle, 14, horn.id, false)
+                    lib.notify({title = 'Horn Changed', description = horn.name, type = 'success'})
+                end
+                openHornMenu()
+            end
+        })
+    end
+    
+    lib.registerContext({
+        id = 'horn_menu',
+        title = 'Vehicle Horn',
+        menu = 'vehicle_customization_menu',
+        options = options
+    })
+    lib.showContext('horn_menu')
+end
+
 local function openVehicleCustomizationMenu()
     local ped = PlayerPedId()
     local vehicle = GetVehiclePedIsIn(ped, false)
@@ -4686,6 +4777,15 @@ local function openVehicleCustomizationMenu()
             iconColor = '#FFD700',
             onSelect = function()
                 openLicensePlateMenu()
+            end
+        },
+        {
+            title = 'Vehicle Horn',
+            description = 'Change horn sound',
+            icon = 'bullhorn',
+            iconColor = '#FFA500',
+            onSelect = function()
+                openHornMenu()
             end
         },
         {
@@ -5126,4 +5226,3 @@ local function openVehicleMenu()
     lib.showContext('vehicle_main_menu')
 end
 RegisterCommand('veh', function() openVehicleMenu() end, false)
-RegisterKeyMapping('veh', 'Open Vehicle Menu', 'keyboard', 'F6')

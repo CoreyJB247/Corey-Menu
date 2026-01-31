@@ -624,13 +624,3 @@ end
 RegisterCommand('misc', function()
     OpenMiscMenu()
 end, false)
-
--- Optional: Add keybind to open menu
-lib.addKeybind({
-    name = 'misc_menu',
-    description = 'Open Misc Menu',
-    defaultKey = 'F3',
-    onPressed = function()
-        OpenMiscMenu()
-    end,
-})

@@ -322,9 +322,6 @@ RegisterCommand('playermenu', function()
     OpenPlayerOptionsMenu()
 end, false)
 
--- Register keybind (F5 by default)
-RegisterKeyMapping('playermenu', 'Open Player Options Menu', 'keyboard', 'F5')
-
 -- Threads for continuous effects
 CreateThread(function()
     while true do
